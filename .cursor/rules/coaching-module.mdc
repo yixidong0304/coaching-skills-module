@@ -1,0 +1,47 @@
+---
+description: Project rules for the Coaching Skills eLearning module
+alwaysApply: true
+---
+
+# Coaching Skills eLearning — Project Rules
+
+## What this is
+A self-paced eLearning module ("Coaching Skills for Managers"), built in React + Vite + Tailwind, styled to look and behave like an **Articulate Rise** course (left lesson menu, progress bar, clean content area, Back/Next). It is a **portfolio piece** for an instructional-design job search, so visual consistency and polish are the point — treat drift as a bug.
+
+## Source of truth
+- Screen content comes from `docs/storyboard.md`. Do not invent, reorder, or rename screens. When building a screen, match its storyboard text hierarchy (title vs. body vs. label), interaction format, and authored example/quiz/scenario content exactly.
+- Where the source training provides exact text (guidance, examples, guiding questions), use it **verbatim** — do not paraphrase.
+
+## Reuse, don't reinvent
+- Always compose screens from the shared components in `src/components/` (`Card`, `SectionHeading`, `Caption`, `FrameworkLetters`, `FrameworkShowcase`, `OscarStepHeader`, `GuidedScenario`, `RevealTile`, `ChoiceOption`, `FeedbackBanner`, `WorkedExample`, `ProgressBar`, `Button`).
+- Never write inline one-off buttons, cards, choice rows, or feedback blocks. If a screen needs something the library lacks, add a reusable component (or extend an existing one) rather than a bespoke inline version — and keep its API consistent with the others.
+
+## Layout & screen conventions
+- Content viewport is **1140px** (`--content-max` / `--max-width-content`); don't reintroduce narrow columns. Prose may self-cap at ~75ch.
+- Side padding uses `--spacing-content-x` (~32px). Bottom nav aligns to the same content width.
+- Standard screen anatomy: **Title → short body paragraph introducing the concept → small instructional caption (how to interact) → the interactive element → optional caption below.**
+- Step-through screens use the **"WORDMARK | Step name"** header treatment (`OscarStepHeader`) with cross-fade on step change, an instruction line under the title, and labeled columns (e.g. Suggested Approach / Example at 40/60).
+
+## Framework showcase panels (OSCAR p2a-2, GROW p3a-1)
+- Sage (`#89C273`) panel, **16:9**, huge watermark letters (`#5F9B63` / `--color-showcase-letter`, ~**42%** panel height, slight vertical stagger).
+- **WHITE** framework words overlapping letters; hover/tap reveals **bold WHITE** detail text with a colored (forest) dot and a **LONG dotted white** leader line to the letter.
+- **Absolute positioning by explicit percentages** — never flex/grid for the desktop composition. Mobile (<700px) may use a vertical stack fallback.
+- Use shared `FrameworkShowcase` (+ layout tables) so OSCAR and GROW stay consistent.
+
+## Design system
+- Use the design tokens (CSS custom properties in `src/index.css`) for all color, type, radius, and spacing. **No raw hex or hardcoded pixel values in components.**
+- Palette: forest `#007843` (primary), sage `#89C273` (secondary / panels / framework), mint `#CFE7C7`, canvas/app-bg neutrals. Feedback: green = correct, amber = partial/redirect, muted red = weak/incorrect.
+
+## Motion & interaction
+- All interactive state changes ease (~200–250ms); clickable elements have hover states (subtle scale + color shift); anything clickable is keyboard-operable; respect `prefers-reduced-motion`.
+- Static content screens get a subtle entrance animation telling the content's story (e.g. left→right for before→after).
+- Every wrong or partial answer must give **feedback that teaches** — never a bare "incorrect." Match the authored feedback in the storyboard.
+- In multi-turn practice (OSCAR practice, GROW example), keep the scenario prompt **persistent** on screen across turns.
+- Respect the interaction-density plan: Parts 1 and the listening cards stay light/static; concentrate rich interaction on `p2a-3`, `p2a-4`, `p2b-4`, `p3a-2`, `p3b-1`. Do not add interaction for its own sake.
+
+## Structure & state
+- Screen order and grouping live in `src/data/courseData.js`. Navigation/progress state lives in `CourseContext`. Screens read/advance via that context — don't duplicate navigation logic per screen.
+- One screen component per storyboard screen, in `src/screens/`, mapped by `componentKey`.
+
+## Accessibility baseline
+- Choice options and reveals are keyboard-operable with visible focus states. Images/icons have text alternatives. Sufficient contrast (including white text on sage showcase panels).
