@@ -184,7 +184,7 @@ export const screens = [
     id: 'p3a-3',
     part: 'part3',
     partLabel: 'Part 3 · Coaching in real life',
-    title: 'GROW, anywhere',
+    title: 'GROW takeaway',
     componentKey: 'P3aGrowAnywhere',
     fullBleed: true,
   },
@@ -199,7 +199,7 @@ export const screens = [
     id: 'p3b-2',
     part: 'part3',
     partLabel: 'Part 3 · Coaching in real life',
-    title: 'When to coach, and when not to',
+    title: 'When to coach, and when to direct',
     componentKey: 'P3bWhenNotApply',
   },
 

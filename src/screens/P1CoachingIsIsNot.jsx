@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react'
 import { consumeEnterFromDivider } from '../lib/dividerTransition'
+import SectionHeading from '../components/SectionHeading'
 import KeyIdea from '../components/KeyIdea'
 
 const ROWS = [
@@ -25,21 +26,19 @@ export default function P1CoachingIsIsNot() {
     <div
       className={[
         'part1-screen',
+        'screen-stack',
         enterFromDivider ? 'screen--from-divider' : '',
       ]
         .filter(Boolean)
         .join(' ')}
     >
-      <header className="mb-6">
-        <h1 className="part1-screen__title m-0">
-          What coaching is, and isn&apos;t
-        </h1>
-      </header>
-
-      <p className="part1-screen__intro part1-screen__intro--secondary m-0">
-        Coaching helps people think through situations and take ownership,
-        rather than relying on the manager to provide every answer.
-      </p>
+      <div className="screen-stack__intro">
+        <SectionHeading title="What coaching is, and isn't" />
+        <p className="screen-lede m-0">
+          Coaching helps people think through situations and take ownership,
+          rather than relying on the manager to provide every answer.
+        </p>
+      </div>
 
       <div
         className="is-not-grid"

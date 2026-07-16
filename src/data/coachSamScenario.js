@@ -20,6 +20,7 @@ export const coachSamScenario = {
   prevNavLabel: 'Previous OSCAR decision',
   nextNavLabel: 'Continue to next OSCAR decision',
   nextNavLockedLabel: 'Select the correct coaching move to continue',
+  navPlacement: 'framework',
   completionVariant: 'complete',
   completion:
     'You completed a full OSCAR conversation: observed the facts, surfaced the impact, invited Sam’s solution, and connected it to a better result. Sam owns the fix—that’s coaching feedback.',

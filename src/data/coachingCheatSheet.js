@@ -1,46 +1,59 @@
-import { QUESTION_FAMILIES } from './questionBank'
-
 /**
  * Framework-level coaching cheat sheet — no scenario answers or hints.
+ * Four sections for the Real Situations side drawer.
  */
 export const CHEAT_SHEET_SECTIONS = [
   {
     id: 'oscar',
     title: 'OSCAR',
-    tag: 'For feedback conversations.',
+    tag: 'Use for feedback conversations.',
     items: [
       { label: 'Observation', line: 'facts you saw' },
-      { label: 'Specific', line: '1–2 key facts' },
-      { label: 'Consequences', line: "ask, don't tell" },
-      { label: 'Actions', line: 'what/how questions' },
-      { label: 'Results', line: 'explore the change' },
+      { label: 'Specific', line: 'focus on 1–2 key facts' },
+      { label: 'Consequences', line: 'ask about the impact' },
+      { label: 'Actions', line: 'ask what they could do next' },
+      { label: 'Results', line: 'clarify the better outcome' },
     ],
   },
   {
     id: 'grow',
     title: 'GROW',
-    tag: 'For structuring a coaching conversation.',
+    tag: 'Use for structuring a short coaching conversation.',
     items: [
       { label: 'Goal', line: 'What needs to be achieved?' },
       { label: 'Reality', line: 'What is happening right now?' },
-      { label: 'Options', line: 'What options do we have?' },
-      { label: 'Way forward', line: 'What is the next practical step?' },
+      { label: 'Options', line: 'What could they try?' },
+      { label: 'Way forward', line: 'What will they do first, and when?' },
     ],
   },
   {
     id: 'questions',
     title: 'Question families',
-    tag: 'For opening up thinking.',
-    items: QUESTION_FAMILIES.map((family) => ({
-      label: family.name,
-      line: family.does.replace(/\.$/, ''),
-    })),
+    tag: null,
+    items: [
+      {
+        label: 'Clarifying',
+        line: 'opens the conversation and gets more detail',
+      },
+      {
+        label: 'Challenging',
+        line: 'tests assumptions and expands possibilities',
+      },
+      {
+        label: 'Gaining commitment',
+        line: 'turns reflection into a clear next step',
+      },
+      {
+        label: 'Demonstrating listening',
+        line: 'confirms understanding and shows you are following',
+      },
+    ],
   },
   {
-    id: 'when-not',
-    title: 'When NOT to coach',
+    id: 'when-direct',
+    title: 'When to direct',
     tag: null,
     items: null,
-    body: "Crisis, safety, or a decision that's yours: direct now, coach before or after.",
+    body: 'Use clear direction when safety, compliance, an urgent decision, or a non-negotiable standard requires immediate action. Coach before or after, not during the critical moment.',
   },
 ]

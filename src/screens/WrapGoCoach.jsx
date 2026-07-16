@@ -1,11 +1,10 @@
 import { useEffect } from 'react'
-import BreathScreen from '../components/BreathScreen'
 import { useCourse } from '../context/CourseContext'
 import { PORTFOLIO_URL } from '../data/site'
+import { IconGrowth } from '../components/CourseIcons'
 
 /**
- * wrap-3 — Final breath / close. Last screen; marks course complete.
- * No Done button — portfolio CTA only; bottom-bar Next stays hidden.
+ * wrap-3 — Distinctive two-column completion send-off.
  */
 function WrapGoCoach() {
   const { markComplete, currentId } = useCourse()
@@ -19,26 +18,56 @@ function WrapGoCoach() {
   }, [markComplete, currentId])
 
   return (
-    <BreathScreen
-      ariaLabel="Go coach"
-      eyebrow="ONE LAST THING"
-      statement="You don't need the perfect question. You need a real one, asked with genuine curiosity."
-      bridgeLine="Fifteen minutes here. The real course is your next conversation. Go coach."
-    >
-      <a
-        className="breath-screen__portfolio"
-        href={hasPortfolio ? PORTFOLIO_URL : '#'}
-        {...(hasPortfolio
-          ? { target: '_blank', rel: 'noopener noreferrer' }
-          : {
-              onClick: (event) => {
-                event.preventDefault()
-              },
-            })}
-      >
-        See how this course was designed →
-      </a>
-    </BreathScreen>
+    <section className="wrap-close" aria-label="Go coach">
+      <div className="wrap-close__glow" aria-hidden="true" />
+      <div className="wrap-close__motif" aria-hidden="true" />
+
+      <div className="wrap-close__layout">
+        <div className="wrap-close__copy">
+          <p className="wrap-close__statement m-0">
+            You don&apos;t need the perfect question.
+            <br />
+            You need a real one, asked with genuine curiosity.
+          </p>
+
+          <p className="wrap-close__next m-0">
+            In your next conversation, pause before giving the answer—and ask
+            one real question first.
+          </p>
+
+          <a
+            className="wrap-close__portfolio"
+            href={hasPortfolio ? PORTFOLIO_URL : '#'}
+            {...(hasPortfolio
+              ? { target: '_blank', rel: 'noopener noreferrer' }
+              : {
+                  onClick: (event) => {
+                    event.preventDefault()
+                  },
+                })}
+          >
+            See how this course was designed →
+          </a>
+        </div>
+
+        <aside
+          className="wrap-close__card"
+          role="note"
+          aria-label="Course complete"
+        >
+          <span className="wrap-close__symbol" aria-hidden="true">
+            <IconGrowth size={40} />
+          </span>
+          <p className="wrap-close__card-title m-0">
+            You&apos;ve built something powerful.
+          </p>
+          <p className="wrap-close__card-body m-0">
+            You now have the mindset, tools, and practice to help your team
+            think more clearly and move forward.
+          </p>
+        </aside>
+      </div>
+    </section>
   )
 }
 

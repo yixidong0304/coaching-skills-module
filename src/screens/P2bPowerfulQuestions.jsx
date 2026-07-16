@@ -24,12 +24,12 @@ export default function P2bPowerfulQuestions() {
     <div className="question-families-screen">
       <SectionHeading title="Four kinds of powerful questions" />
 
-      <p className="m-0 mb-6 max-w-prose text-body text-ink">
+      <p className="screen-lede m-0">
         You do not need a perfect question. You need the right kind at the right
         moment. These four families cover most everyday coaching conversations.
       </p>
 
-      <Caption className="mb-3">
+      <Caption className="screen-caption">
         Preview each family below. Open a card to explore the full question
         bank.
       </Caption>

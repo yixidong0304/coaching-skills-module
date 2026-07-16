@@ -1,14 +1,20 @@
 /**
- * Page-level instructional takeaway — pale mint note, not a card/alert/CTA.
+ * Page-level instructional takeaway — calm mint highlight for reading/reflection.
+ * Not a progress/transition cue (see ActivityCallout).
+ * Optional label overrides the default “Key idea” (e.g. Key decision).
  */
-export default function KeyIdea({ children, className = '' }) {
+export default function KeyIdea({
+  children,
+  className = '',
+  label = 'Key idea',
+}) {
   return (
     <aside
       className={['key-idea', className].filter(Boolean).join(' ')}
       role="note"
-      aria-label="Key idea"
+      aria-label={label}
     >
-      <p className="key-idea__label m-0">Key idea</p>
+      <p className="key-idea__label m-0">{label}</p>
       <div className="key-idea__text">{children}</div>
     </aside>
   )

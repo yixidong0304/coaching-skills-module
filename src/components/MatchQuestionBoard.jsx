@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import Card from './Card'
 import ChoiceOption from './ChoiceOption'
 import InlineOutcomeFeedback from './InlineOutcomeFeedback'
 import ActivityCallout from './ActivityCallout'
+import QuestionPromptCard from './QuestionPromptCard'
 import {
   MATCH_COMPLETION_NEUTRAL,
   MATCH_COMPLETION_PERFECT,
@@ -50,6 +50,7 @@ export default function MatchQuestionBoard({ lockCourseNext = true }) {
   )
   const [records, setRecords] = useState(() => hydrateRecords(saved?.records))
   const [complete, setComplete] = useState(() => Boolean(saved?.complete))
+  const [enterDir, setEnterDir] = useState('initial')
 
   useEffect(() => {
     setProgress(progressKey, {
@@ -63,7 +64,6 @@ export default function MatchQuestionBoard({ lockCourseNext = true }) {
   const total = MATCH_QUESTIONS.length
   const question = MATCH_QUESTIONS[index]
   const record = records[index]
-  const progressLabel = `${index + 1} of ${total}`
   const completedCount = records.filter((r) => r.resolved).length
   const isReview = record.resolved
   const showingActive = index === progressIndex && !record.resolved && !complete
@@ -111,6 +111,7 @@ export default function MatchQuestionBoard({ lockCourseNext = true }) {
 
   function goPrevious() {
     if (index <= 0) return
+    setEnterDir('back')
     setIndex((i) => i - 1)
   }
 
@@ -121,6 +122,7 @@ export default function MatchQuestionBoard({ lockCourseNext = true }) {
     if (index === progressIndex && record.resolved) {
       setProgressIndex(index + 1)
     }
+    setEnterDir('forward')
     setIndex(index + 1)
   }
 
@@ -161,140 +163,156 @@ export default function MatchQuestionBoard({ lockCourseNext = true }) {
     : MATCH_COMPLETION_NEUTRAL
 
   return (
-    <div className="match-quiz">
-      <div key={question.id} className="match-quiz__stage">
-        <Card tone="mint" className="match-quiz__stem">
-          <div className="match-quiz__stem-header">
-            <p className="match-quiz__stem-meta m-0">{progressLabel}:</p>
-            <div
-              className="match-quiz__dots"
-              role="progressbar"
-              aria-valuemin={0}
-              aria-valuemax={total}
-              aria-valuenow={completedCount}
-              aria-label={`${completedCount} of ${total} questions completed`}
-            >
-              {MATCH_QUESTIONS.map((item, i) => (
+    <div className="match-quiz match-quiz--framed">
+      <div
+        key={question.id}
+        className={['match-quiz__stage', 'ia-stage', `is-${enterDir}`].join(
+          ' ',
+        )}
+      >
+        <div className="match-quiz__question">
+          <div
+            className="guided-scenario__question-area guided-scenario__question-area--prompt"
+            aria-label="Question navigation"
+          >
+            <div className="guided-scenario__nav-slot guided-scenario__nav-slot--prev">
+              {showPrev ? (
+                <button
+                  type="button"
+                  className="guided-scenario__nav-arrow ia-arrow"
+                  aria-label="Previous question"
+                  onClick={goPrevious}
+                >
+                  <span aria-hidden="true">←</span>
+                </button>
+              ) : (
                 <span
-                  key={item.id}
-                  className={[
-                    'match-quiz__dot',
-                    i < completedCount ? 'is-filled' : '',
-                    i === index && !record.resolved ? 'is-current' : '',
-                  ].join(' ')}
+                  className="guided-scenario__nav-spacer"
                   aria-hidden="true"
                 />
-              ))}
+              )}
+            </div>
+
+            <div className="guided-scenario__question-main ia-prompt">
+              <QuestionPromptCard
+                index={index}
+                total={total}
+                text={question.text}
+                completedCount={completedCount}
+                currentResolved={record.resolved}
+                quote
+                className="match-quiz__stem"
+              />
+            </div>
+
+            <div className="guided-scenario__nav-slot guided-scenario__nav-slot--next">
+              {showNext ? (
+                <button
+                  type="button"
+                  className={[
+                    'guided-scenario__nav-arrow',
+                    'ia-arrow',
+                    !canGoNext ? 'is-disabled' : '',
+                  ].join(' ')}
+                  aria-label={
+                    canGoNext
+                      ? 'Next question'
+                      : 'Answer correctly to continue'
+                  }
+                  title={
+                    canGoNext
+                      ? 'Next question'
+                      : 'Answer correctly to continue'
+                  }
+                  disabled={!canGoNext}
+                  onClick={goNext}
+                >
+                  <span aria-hidden="true">→</span>
+                </button>
+              ) : (
+                <span
+                  className="guided-scenario__nav-spacer"
+                  aria-hidden="true"
+                />
+              )}
             </div>
           </div>
-          <p className="match-quiz__stem-text m-0">
-            &ldquo;{question.text}&rdquo;
-          </p>
-        </Card>
+        </div>
 
-        <div
-          className="match-quiz__options match-quiz__options--inline"
-          role="group"
-          aria-label="Question family"
-        >
-          {MATCH_FAMILIES.map((family) => {
-            const state = optionState(family.id)
-            const locked = isReview || !showingActive
-            const feedback = feedbackFor(family.id)
-            const open = Boolean(feedback)
+        <div className="match-quiz__answers">
+          <div
+            className="match-quiz__options match-quiz__options--inline"
+            role="group"
+            aria-label="Question family"
+          >
+            {MATCH_FAMILIES.map((family, familyIndex) => {
+              const state = optionState(family.id)
+              const locked = isReview || !showingActive
+              const feedback = feedbackFor(family.id)
+              const open = Boolean(feedback)
 
-            return (
-              <div
-                key={family.id}
-                className={[
-                  'guided-scenario__choice-block',
-                  'match-quiz__choice-block',
-                  open ? 'has-feedback' : '',
-                  feedback ? `is-${feedback.outcome}` : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-              >
-                <ChoiceOption
-                  state={state}
-                  lockState={false}
-                  disabled={locked}
+              return (
+                <div
+                  key={family.id}
                   className={[
-                    'match-quiz__option',
-                    open ? 'guided-scenario__choice--attached' : '',
+                    'guided-scenario__choice-block',
+                    'match-quiz__choice-block',
+                    'ia-choice',
+                    open ? 'has-feedback' : '',
+                    feedback ? `is-${feedback.outcome}` : '',
                   ]
                     .filter(Boolean)
                     .join(' ')}
-                  aria-label={`${family.name}: ${family.does}`}
-                  aria-describedby={
-                    open ? `match-feedback-${family.id}` : undefined
-                  }
-                  onClick={() => handleSelect(family.id)}
+                  style={{ '--ia-choice-index': familyIndex }}
                 >
-                  <span className="match-quiz__option-name">{family.name}</span>
-                  <span className="match-quiz__option-does">{family.does}</span>
-                </ChoiceOption>
+                  <ChoiceOption
+                    state={state}
+                    lockState={false}
+                    disabled={locked}
+                    className={[
+                      'match-quiz__option',
+                      open ? 'guided-scenario__choice--attached' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    aria-label={`${family.name}: ${family.does}`}
+                    aria-describedby={
+                      open ? `match-feedback-${family.id}` : undefined
+                    }
+                    onClick={() => handleSelect(family.id)}
+                  >
+                    <span className="match-quiz__option-name">
+                      {family.name}
+                    </span>
+                    <span className="match-quiz__option-does">
+                      {family.does}
+                    </span>
+                  </ChoiceOption>
 
-                <div id={`match-feedback-${family.id}`}>
-                  <InlineOutcomeFeedback
-                    outcome={feedback?.outcome ?? 'incorrect'}
-                    message={feedback?.message ?? ''}
-                    open={open}
-                    panelRef={feedbackRef}
-                    isFocusTarget={open}
-                  />
+                  <div id={`match-feedback-${family.id}`}>
+                    <InlineOutcomeFeedback
+                      outcome={feedback?.outcome ?? 'incorrect'}
+                      message={feedback?.message ?? ''}
+                      open={open}
+                      panelRef={feedbackRef}
+                      isFocusTarget={open}
+                    />
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {complete && index === total - 1 ? (
-          <ActivityCallout
-            variant="complete"
-            className="match-quiz__completion"
-          >
-            <p className="m-0">{completionText}</p>
-          </ActivityCallout>
-        ) : null}
-      </div>
-
-      <div className="match-quiz__nav match-quiz__nav--activity">
-        <div className="match-quiz__nav-slot">
-          {showPrev ? (
-            <button
-              type="button"
-              className="guided-scenario__nav-arrow"
-              aria-label="Previous question"
-              onClick={goPrevious}
-            >
-              <span aria-hidden="true">←</span>
-            </button>
-          ) : null}
-        </div>
-
-        <div className="match-quiz__nav-slot match-quiz__nav-slot--end">
-          {showNext ? (
-            <button
-              type="button"
-              className={[
-                'guided-scenario__nav-arrow',
-                !canGoNext ? 'is-disabled' : '',
-              ].join(' ')}
-              aria-label={
-                canGoNext ? 'Next question' : 'Answer correctly to continue'
-              }
-              title={
-                canGoNext ? 'Next question' : 'Answer correctly to continue'
-              }
-              disabled={!canGoNext}
-              onClick={goNext}
-            >
-              <span aria-hidden="true">→</span>
-            </button>
-          ) : null}
+              )
+            })}
+          </div>
         </div>
       </div>
+
+      {complete && index === total - 1 ? (
+        <ActivityCallout
+          variant="complete"
+          className="match-quiz__completion"
+        >
+          <p className="m-0">{completionText}</p>
+        </ActivityCallout>
+      ) : null}
     </div>
   )
 }

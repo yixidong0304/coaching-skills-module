@@ -23,6 +23,7 @@ export default function OscarStepHeader({
   interactive = true,
   highlightMode = 'through',
   ariaLabel = 'Framework steps',
+  className = '',
 }) {
   const skipFade = useRef(true)
   const [displayedName, setDisplayedName] = useState(stepName)
@@ -73,7 +74,9 @@ export default function OscarStepHeader({
   }
 
   return (
-    <div className="oscar-step-header">
+    <div
+      className={['oscar-step-header', className].filter(Boolean).join(' ')}
+    >
       <div
         className={[
           'oscar-step-header__letters',
@@ -101,7 +104,12 @@ export default function OscarStepHeader({
                   stage === stepIndex && firstOfStage ? 'step' : undefined
                 }
               >
-                {letter}
+                <span
+                  className="oscar-step-header__letter-glyph"
+                  aria-hidden="true"
+                >
+                  {letter}
+                </span>
               </span>
             )
           }
@@ -122,7 +130,6 @@ export default function OscarStepHeader({
               onClick={(event) => {
                 if (!canClick) return
                 onSelect?.(stage)
-                // Mouse activation should not leave a sticky focus ring.
                 if (event.detail > 0) {
                   event.currentTarget.blur()
                 }
@@ -133,7 +140,10 @@ export default function OscarStepHeader({
                 !canClick ? 'is-locked' : '',
               ].join(' ')}
             >
-              <span className="oscar-step-header__letter-glyph" aria-hidden="true">
+              <span
+                className="oscar-step-header__letter-glyph"
+                aria-hidden="true"
+              >
                 {letter}
               </span>
             </button>

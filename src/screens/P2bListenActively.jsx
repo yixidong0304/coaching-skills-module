@@ -27,13 +27,14 @@ const HABITS = [
 
 export default function P2bListenActively() {
   return (
-    <div className="listening-habits-screen">
-      <SectionHeading title="How to listen actively" />
-
-      <p className="listening-habits-screen__intro m-0 text-body text-ink whitespace-nowrap max-[800px]:whitespace-normal">
-        Active listening comes down to four small habits—even in a two-minute
-        conversation.
-      </p>
+    <div className="listening-habits-screen screen-stack">
+      <div className="screen-stack__intro">
+        <SectionHeading title="How to listen actively" />
+        <p className="screen-lede m-0">
+          Active listening comes down to four small habits—even in a two-minute
+          conversation.
+        </p>
+      </div>
 
       <div
         className="static-card-grid listening-habits"

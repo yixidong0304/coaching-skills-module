@@ -11,11 +11,16 @@ const VARIANTS = {
     label: 'Next skill',
     ariaLabel: 'Next skill',
   },
+  'part-complete': {
+    label: 'Part 3 complete',
+    ariaLabel: 'Part 3 complete',
+  },
 }
 
 /**
- * Labeled pale-green callout for assessment completion / transitions.
- * Same visual family as Key Idea / Coaching Move; distinct semantic label.
+ * Momentum / transition callout — completion, next step, next skill, part complete.
+ * Default: completed informational card. Hover: forest left accent + lift
+ * (“ready to continue”) — not clickable, no decorative arrow.
  */
 export default function ActivityCallout({
   variant = 'complete',
@@ -26,7 +31,13 @@ export default function ActivityCallout({
 
   return (
     <aside
-      className={['activity-callout', className].filter(Boolean).join(' ')}
+      className={[
+        'activity-callout',
+        `activity-callout--${variant}`,
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       role="status"
       aria-label={meta.ariaLabel}
     >

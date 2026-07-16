@@ -50,7 +50,7 @@ export default function WorkedExample({
 
   return (
     <div className="worked-example__layout">
-      <div className="worked-example__col">
+      <div className="worked-example__col ia-panel ia-panel--left">
         <h2 className="worked-example__col-title">{leftHeading}</h2>
         <Card tone="mint" className="worked-example__panel">
           <div
@@ -64,7 +64,7 @@ export default function WorkedExample({
         </Card>
       </div>
 
-      <div className="worked-example__col">
+      <div className="worked-example__col ia-panel ia-panel--right">
         <h2 className="worked-example__col-title">{rightHeading}</h2>
         <ul className="worked-example__lines m-0 list-none space-y-2 p-0">
           {lines.map((line, index) => {
@@ -75,7 +75,11 @@ export default function WorkedExample({
             const canSelect = interactive && !isFuture
 
             return (
-              <li key={index}>
+              <li
+                key={index}
+                className="ia-line"
+                style={{ '--ia-line-index': index }}
+              >
                 <button
                   type="button"
                   disabled={!canSelect}

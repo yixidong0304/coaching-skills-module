@@ -3,6 +3,7 @@ import SectionHeading from '../components/SectionHeading'
 import OscarStepHeader from '../components/OscarStepHeader'
 import WorkedExample from '../components/WorkedExample'
 import { useCourse } from '../context/CourseContext'
+import useScreenEntrance from '../hooks/useScreenEntrance'
 
 const OSCAR_STEPS = [
   {
@@ -68,6 +69,7 @@ export default function P2aOscarStepByStep() {
     getProgress,
     setProgress,
   } = useCourse()
+  const entrancePhase = useScreenEntrance(700)
   const progressKey = 'oscar-steps'
   const saved = getProgress(progressKey)
 
@@ -78,6 +80,7 @@ export default function P2aOscarStepByStep() {
     const fromSave = Array.isArray(saved?.visited) ? saved.visited : [0]
     return new Set(fromSave.includes(0) ? fromSave : [...fromSave, 0])
   })
+  const [enterDir, setEnterDir] = useState('initial')
 
   const step = OSCAR_STEPS[stepIndex]
   const isFirst = stepIndex === 0
@@ -86,6 +89,8 @@ export default function P2aOscarStepByStep() {
 
   function goToStep(index) {
     const next = Math.max(0, Math.min(TOTAL_STEPS - 1, index))
+    if (next === stepIndex) return
+    setEnterDir(next > stepIndex ? 'forward' : 'back')
     setStepIndex(next)
     setVisited((prev) => {
       if (prev.has(next)) return prev
@@ -112,25 +117,66 @@ export default function P2aOscarStepByStep() {
   }, [allVisited, markComplete, currentId])
 
   return (
-    <div className="oscar-walkthrough">
+    <div className={['oscar-walkthrough', 'ia-practice', entrancePhase].join(' ')}>
       <SectionHeading title="OSCAR, step by step" />
 
-      <p className="m-0 mb-6 text-body text-ink whitespace-nowrap max-[800px]:whitespace-normal">
-        Use the arrows or select a letter to build the conversation step by step.
+      <p className="screen-lede m-0">
+        Use the arrows or select a letter to build the conversation step by
+        step.
       </p>
 
-      <OscarStepHeader
-        letters={OSCAR_STEPS.map((s) => s.letter)}
-        stepNames={OSCAR_STEPS.map((s) => s.name)}
-        stepIndex={stepIndex}
-        stepName={step.name}
-        visitedIndices={[...visited]}
-        highlightMode="visited"
-        onSelect={goToStep}
-        ariaLabel="OSCAR steps"
-      />
+      <div className="oscar-framework-nav" aria-label="OSCAR step navigation">
+        <div className="oscar-framework-nav__slot">
+          <button
+            type="button"
+            className={[
+              'guided-scenario__nav-arrow',
+              'ia-arrow',
+              isFirst ? 'is-disabled' : '',
+            ].join(' ')}
+            aria-label="Previous OSCAR step"
+            disabled={isFirst}
+            onClick={() => goToStep(stepIndex - 1)}
+          >
+            <span aria-hidden="true">←</span>
+          </button>
+        </div>
 
-      <div className="oscar-walkthrough__body">
+        <OscarStepHeader
+          className="oscar-framework-nav__header"
+          letters={OSCAR_STEPS.map((s) => s.letter)}
+          stepNames={OSCAR_STEPS.map((s) => s.name)}
+          stepIndex={stepIndex}
+          stepName={step.name}
+          visitedIndices={[...visited]}
+          highlightMode="visited"
+          onSelect={goToStep}
+          ariaLabel="OSCAR steps"
+        />
+
+        <div className="oscar-framework-nav__slot oscar-framework-nav__slot--end">
+          <button
+            type="button"
+            className={[
+              'guided-scenario__nav-arrow',
+              'ia-arrow',
+              isLast ? 'is-disabled' : '',
+            ].join(' ')}
+            aria-label="Next OSCAR step"
+            disabled={isLast}
+            onClick={() => goToStep(stepIndex + 1)}
+          >
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+
+      <div
+        key={stepIndex}
+        className={['oscar-walkthrough__body', 'ia-stage', `is-${enterDir}`].join(
+          ' ',
+        )}
+      >
         <WorkedExample
           stepKey={stepIndex}
           leftHeading="Your move"
@@ -141,38 +187,6 @@ export default function P2aOscarStepByStep() {
           showFuture={false}
           onSelectLine={goToStep}
         />
-
-        <div className="match-quiz__nav worked-example__nav">
-          <div className="match-quiz__nav-slot">
-            <button
-              type="button"
-              className={[
-                'guided-scenario__nav-arrow',
-                isFirst ? 'is-disabled' : '',
-              ].join(' ')}
-              aria-label="Previous OSCAR step"
-              disabled={isFirst}
-              onClick={() => goToStep(stepIndex - 1)}
-            >
-              <span aria-hidden="true">←</span>
-            </button>
-          </div>
-
-          <div className="match-quiz__nav-slot match-quiz__nav-slot--end">
-            <button
-              type="button"
-              className={[
-                'guided-scenario__nav-arrow',
-                isLast ? 'is-disabled' : '',
-              ].join(' ')}
-              aria-label="Next OSCAR step"
-              disabled={isLast}
-              onClick={() => goToStep(stepIndex + 1)}
-            >
-              <span aria-hidden="true">→</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   )

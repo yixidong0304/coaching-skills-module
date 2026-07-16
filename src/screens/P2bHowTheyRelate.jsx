@@ -63,14 +63,15 @@ function RhythmArrow({ enterClass }) {
 
 export default function P2bHowTheyRelate() {
   return (
-    <div className="listening-relate">
-      <SectionHeading title="Listening makes questions work" />
-
-      <p className="listening-relate__intro m-0 max-w-prose text-body text-ink">
-        Powerful questions only help when they respond to what the other person
-        actually said. Coaching moves in a simple rhythm: listen, ask from what
-        you heard, then listen again.
-      </p>
+    <div className="listening-relate screen-stack">
+      <div className="screen-stack__intro">
+        <SectionHeading title="Listening makes questions work" />
+        <p className="screen-lede m-0">
+          Powerful questions only help when they respond to what the other person
+          actually said. Coaching moves in a simple rhythm: listen, ask from what
+          you heard, then listen again.
+        </p>
+      </div>
 
       <div
         className="listening-rhythm"

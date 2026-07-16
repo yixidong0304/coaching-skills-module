@@ -1,72 +1,170 @@
 import SectionHeading from '../components/SectionHeading'
-import Card from '../components/Card'
-import Caption from '../components/Caption'
+import {
+  IconConversation,
+  IconMagnifier,
+  IconListening,
+  IconGrowth,
+  IconCheck,
+  IconStar,
+  IconTarget,
+} from '../components/CourseIcons'
 
 const JOURNEY_NODES = [
   {
     label: 'What coaching is',
-    summary: 'Asking, not telling, and knowing when each fits.',
+    support: 'Understand the mindset and when it fits.',
+    Icon: IconConversation,
+    tone: 'mint',
   },
   {
     label: 'OSCAR',
-    summary:
-      'Feedback as a conversation: Observation → Specific → Consequences → Actions → Results.',
+    support: 'Structure feedback that drives clarity and action.',
+    Icon: IconMagnifier,
+    tone: 'mint',
   },
   {
     label: 'Listening & questions',
-    summary:
-      'The container and what you do inside it: four question families.',
+    support: 'Listen actively and ask powerful questions.',
+    Icon: IconListening,
+    tone: 'mint',
   },
   {
     label: 'GROW',
-    summary: 'A whole coaching conversation in four moves, hallway-sized.',
-  },
-  {
-    label: 'Real situations',
-    summary: 'Choosing the approach, and knowing when not to coach.',
+    support: 'Guide short coaching conversations that move people forward.',
+    Icon: IconGrowth,
+    tone: 'forest',
   },
 ]
 
-const TAKEAWAY_ROW =
-  'Coaching works under time pressure · One good question can beat a long explanation · Small moments build long-term capability.'
+const KEY_TAKEAWAYS = [
+  'Coaching works even under time pressure.',
+  'Coaching conversations can lead to sustainable improvement.',
+  'One good question can be more effective than a long explanation.',
+]
+
+const ACTION_PLAN = [
+  'One coaching question I will use in my next work day',
+  'Choose one situation where you will try OSCAR or GROW',
+  'Notice the impact—and iterate',
+]
 
 /**
- * wrap-1 — Module map journey (replaces BreathScreen takeaways).
- * Full-bleed canvas panel; inner content centered at content max-width.
+ * wrap-1 — Approved journey infographic + Key Takeaways / Action Plan panel.
  */
 function WrapKeyTakeaways() {
   return (
     <div className="module-journey">
       <div className="module-journey__inner">
-        <SectionHeading title="The whole module, at a glance" />
+        <header className="module-journey__header">
+          <SectionHeading title="You're ready to coach." />
+          <p className="module-journey__intro m-0">
+            Here&apos;s the big picture—your toolkit for everyday leadership
+            conversations.
+          </p>
+        </header>
 
-        <p className="m-0 mb-8 max-w-prose text-body text-ink">
-          Here&apos;s the ground you just covered, and how it fits together.
-        </p>
-
-        <ol className="module-map" aria-label="Module map">
-          {JOURNEY_NODES.map((node, index) => (
-            <li
-              key={node.label}
-              className={`module-map__step module-map__step--${index + 1}`}
-            >
-              {index > 0 ? (
-                <div
-                  className={`module-map__connector module-map__connector--${index}`}
-                  aria-hidden="true"
-                />
-              ) : null}
-              <Card className="module-map__card">
-                <p className="module-map__label m-0">{node.label}</p>
-                <p className="module-map__summary m-0">{node.summary}</p>
-              </Card>
-            </li>
-          ))}
+        <ol className="module-map" aria-label="Your learning journey">
+          {JOURNEY_NODES.map((node, index) => {
+            const Icon = node.Icon
+            return (
+              <li
+                key={node.label}
+                className={[
+                  'module-map__step',
+                  `module-map__step--${index + 1}`,
+                  `module-map__step--${node.tone}`,
+                ].join(' ')}
+              >
+                {index > 0 ? (
+                  <div
+                    className={`module-map__connector module-map__connector--${index}`}
+                    aria-hidden="true"
+                  />
+                ) : null}
+                <div className="module-map__node">
+                  <span
+                    className={[
+                      'module-map__icon-circle',
+                      node.tone === 'forest'
+                        ? 'module-map__icon-circle--forest'
+                        : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    aria-hidden="true"
+                  >
+                    <Icon size={54} />
+                  </span>
+                  <p className="module-map__label m-0">
+                    {index + 1}. {node.label}
+                  </p>
+                  <p className="module-map__support m-0">{node.support}</p>
+                </div>
+              </li>
+            )
+          })}
         </ol>
 
-        <Caption className="module-journey__takeaways mt-8">
-          {TAKEAWAY_ROW}
-        </Caption>
+        <aside
+          className="journey-panel"
+          aria-label="Key takeaways and your action plan"
+        >
+          <section
+            className="journey-panel__col journey-panel__col--takeaways"
+            aria-labelledby="key-takeaways-heading"
+          >
+            <header className="journey-panel__heading">
+              <span className="journey-panel__heading-icon" aria-hidden="true">
+                <IconStar size={28} />
+              </span>
+              <h2 id="key-takeaways-heading" className="journey-panel__title m-0">
+                Key takeaways
+              </h2>
+            </header>
+            <ul className="journey-panel__list m-0 list-none p-0">
+              {KEY_TAKEAWAYS.map((item, index) => (
+                <li
+                  key={item}
+                  className={`journey-panel__item journey-panel__item--${index + 1}`}
+                >
+                  <span className="journey-panel__check" aria-hidden="true">
+                    <IconCheck size={18} />
+                  </span>
+                  <p className="journey-panel__text m-0">{item}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <div className="journey-panel__divider" aria-hidden="true" />
+
+          <section
+            className="journey-panel__col journey-panel__col--actions"
+            aria-labelledby="action-plan-heading"
+          >
+            <header className="journey-panel__heading">
+              <span className="journey-panel__heading-icon" aria-hidden="true">
+                <IconTarget size={28} />
+              </span>
+              <h2 id="action-plan-heading" className="journey-panel__title m-0">
+                Your action plan
+              </h2>
+            </header>
+            <ol className="journey-panel__list journey-panel__list--actions m-0 list-none p-0">
+              {ACTION_PLAN.map((item, index) => (
+                <li
+                  key={item}
+                  className={`journey-panel__item journey-panel__item--${index + 1}`}
+                >
+                  <span className="journey-panel__num" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <p className="journey-panel__text m-0">{item}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+        </aside>
       </div>
     </div>
   )

@@ -1,6 +1,8 @@
-export default function SectionHeading({ title, subtitle, eyebrow }) {
+export default function SectionHeading({ title, subtitle, eyebrow, className = '' }) {
   return (
-    <header className="mb-6">
+    <header
+      className={['section-heading', 'mb-6', className].filter(Boolean).join(' ')}
+    >
       {eyebrow ? (
         <p className="mb-2 text-caption font-medium text-ink-soft uppercase tracking-wide">
           {eyebrow}

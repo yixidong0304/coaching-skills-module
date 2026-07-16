@@ -2,7 +2,7 @@ import { GUIDED_PRACTICE_UI } from './guidedPracticeUi'
 
 /**
  * GROW in action — guided scenario for GuidedScenario (p3a-2).
- * Lighter than Coach Sam: selected-only feedback, no distractor reveal.
+ * Same feedback pattern as Coach Sam: primary-then-misses.
  * Outcomes: 'correct' | 'partial' | 'incorrect'
  */
 export const growInActionScenario = {
@@ -15,10 +15,13 @@ export const growInActionScenario = {
     'Priya is a strong performer who has recently started saying yes to everything. Two deliverables are now slipping, and she seems stretched thin. Coach her through a short GROW conversation.',
   frameworkLabel: 'GROW',
   wordmark: ['G', 'R', 'O', 'W'],
-  feedbackMode: 'selected-only',
+  feedbackMode: 'primary-then-misses',
+  missesVariant: 'light-list',
+  missesTitle: 'Why the others fall short',
   prevNavLabel: 'Previous GROW stage',
   nextNavLabel: 'Next GROW stage',
   nextNavLockedLabel: 'Select the correct question to continue',
+  navPlacement: 'framework',
   completionVariant: 'complete',
   completion:
     'You completed a full GROW conversation: define the goal, understand reality, explore options, and agree on a way forward.',
@@ -35,6 +38,8 @@ export const growInActionScenario = {
           outcome: 'partial',
           feedback:
             "You've jumped to a solution before Priya has defined the goal.",
+          missSummary:
+            'Jumps to a solution. Goal comes first—let Priya define the target before exploring options.',
         },
         {
           id: 'g-b',
@@ -49,6 +54,8 @@ export const growInActionScenario = {
           outcome: 'partial',
           feedback:
             'Too vague—a Goal question points forward at what she wants, not backward at what’s wrong.',
+          missSummary:
+            'Too vague and backward-looking. A Goal question points forward at what she wants.',
         },
       ],
     },
@@ -71,6 +78,8 @@ export const growInActionScenario = {
           outcome: 'partial',
           feedback:
             "That's your assumption stated as fact—draw out what you both can see.",
+          missSummary:
+            'States your assumption as fact. Reality draws out what you both can see, without judgment.',
         },
         {
           id: 'r-c',
@@ -78,6 +87,8 @@ export const growInActionScenario = {
           outcome: 'incorrect',
           feedback:
             "A blaming 'why' shuts down the honest picture you need here.",
+          missSummary:
+            "A blaming 'why' shuts down the honest picture Reality needs.",
         },
       ],
     },
@@ -93,6 +104,8 @@ export const growInActionScenario = {
           outcome: 'partial',
           feedback:
             "That's your plan—Options is where Priya generates the possibilities.",
+          missSummary:
+            "That's your plan. Options is where Priya generates the possibilities.",
         },
         {
           id: 'o-b',
@@ -107,6 +120,8 @@ export const growInActionScenario = {
           outcome: 'incorrect',
           feedback:
             'A leading question toward one (unhealthy) fix—keep Options open.',
+          missSummary:
+            'Leads toward one (unhealthy) fix. Options should stay open so Priya can generate several paths.',
         },
       ],
     },
@@ -122,6 +137,8 @@ export const growInActionScenario = {
           outcome: 'partial',
           feedback:
             'Too loose—Way forward names the specific first step and when.',
+          missSummary:
+            'Too loose. Way forward names the specific first step and when.',
         },
         {
           id: 'w-b',
@@ -136,6 +153,8 @@ export const growInActionScenario = {
           outcome: 'partial',
           feedback:
             'Friendly, but no commitment—pin the first step and timing before you wrap.',
+          missSummary:
+            'Friendly, but no commitment. Pin the first step and timing before you wrap.',
         },
       ],
     },

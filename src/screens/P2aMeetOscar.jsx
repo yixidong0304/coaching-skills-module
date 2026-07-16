@@ -2,6 +2,7 @@ import SectionHeading from '../components/SectionHeading'
 import Caption from '../components/Caption'
 import FrameworkShowcase from '../components/FrameworkShowcase'
 import KeyIdea from '../components/KeyIdea'
+import useScreenEntrance from '../hooks/useScreenEntrance'
 
 const OSCAR_ITEMS = [
   {
@@ -36,19 +37,26 @@ const OSCAR_ITEMS = [
 ]
 
 export default function P2aMeetOscar() {
+  const entrancePhase = useScreenEntrance(800)
+
   return (
-    <div>
+    <div className={['meet-framework', entrancePhase].join(' ')}>
       <SectionHeading title="Meet OSCAR" />
 
-      <p className="m-0 mb-6 text-body text-ink whitespace-nowrap max-[800px]:whitespace-normal">
-        OSCAR is a five-step structure for coaching feedback, from what you observed to what changes next.
+      <p className="screen-lede m-0">
+        OSCAR is a five-step structure for coaching feedback, from what you
+        observed to what changes next.
       </p>
 
-      <Caption className="mb-3 whitespace-nowrap max-[800px]:whitespace-normal">
+      <Caption className="screen-caption">
         Hover over or tap each letter to explore the five steps.
       </Caption>
 
-      <FrameworkShowcase items={OSCAR_ITEMS} ariaLabel="OSCAR framework" />
+      <FrameworkShowcase
+        items={OSCAR_ITEMS}
+        ariaLabel="OSCAR framework"
+        defaultIndex={null}
+      />
 
       <KeyIdea>
         Use the steps in order to keep feedback specific, constructive, and

@@ -1,3 +1,4 @@
+import SectionHeading from '../components/SectionHeading'
 import Card from '../components/Card'
 import KeyIdea from '../components/KeyIdea'
 
@@ -16,15 +17,14 @@ const MODES = [
 
 export default function P1ManagerVsCoach() {
   return (
-    <div className="part1-screen">
-      <header className="mb-6">
-        <h1 className="part1-screen__title m-0">Same leader, two modes</h1>
-      </header>
-
-      <p className="part1-screen__intro part1-screen__intro--secondary m-0">
-        Directing and coaching are not separate roles. They are two modes the
-        same leader uses.
-      </p>
+    <div className="part1-screen screen-stack">
+      <div className="screen-stack__intro">
+        <SectionHeading title="Same leader, two modes" />
+        <p className="screen-lede m-0">
+          Directing and coaching are not separate roles. They are two modes the
+          same leader uses.
+        </p>
+      </div>
 
       <div
         className="hats-pair"

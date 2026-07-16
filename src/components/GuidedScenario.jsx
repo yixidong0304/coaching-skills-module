@@ -1,19 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import SectionHeading from './SectionHeading'
-import Card from './Card'
 import Button from './Button'
+import ScenarioContextCard from './ScenarioContextCard'
 import ChoiceOption from './ChoiceOption'
 import FeedbackBanner from './FeedbackBanner'
 import InlineOutcomeFeedback from './InlineOutcomeFeedback'
 import AssessmentMissesPanel from './AssessmentMissesPanel'
 import ActivityCallout from './ActivityCallout'
 import OscarStepHeader from './OscarStepHeader'
+import QuestionPromptCard from './QuestionPromptCard'
 import { CHOICE_LETTERS } from './ScenarioFeedbackPanel'
 import {
   OUTCOME_TO_BANNER,
   OUTCOME_TO_CHOICE,
 } from '../data/assessmentFeedback'
 import { useCourse } from '../context/CourseContext'
+import useScreenEntrance from '../hooks/useScreenEntrance'
 
 /**
  * Reusable guided multi-stage choice walkthrough.
@@ -29,6 +31,7 @@ import { useCourse } from '../context/CourseContext'
 export default function GuidedScenario({ config, lockCourseNext = true }) {
   const { setNextLocked, markComplete, currentId, getProgress, setProgress } =
     useCourse()
+  const entrancePhase = useScreenEntrance(650)
   const stages = config.stages
   const progressKey = `guided:${config.id}`
   const letters = useMemo(
@@ -46,11 +49,11 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
   const wordmarkInteractive = config.wordmarkInteractive === true
   const wordmarkHighlight = config.wordmarkHighlight ?? 'current'
   const navStyle = config.navStyle ?? 'questions'
-  const scenarioTone = config.scenarioTone ?? 'mint'
   const letterStages = config.letterStages
   const showScenario = Boolean(config.scenario) && config.showScenario !== false
   const showWordmark = config.showWordmark !== false
-  const navPlacement = config.navPlacement ?? 'side'
+  const navPlacement = config.navPlacement ?? 'bottom'
+  const promptCard = config.promptCard === true
   const hierarchical =
     config.feedbackMode === 'primary-then-misses' ||
     config.feedbackMode === 'selected-only'
@@ -98,6 +101,10 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
     Number.isInteger(saved?.viewIndex) ? saved.viewIndex : 0,
   )
   const [turnFading, setTurnFading] = useState(false)
+  const [enterDir, setEnterDir] = useState('initial')
+  const prevViewRef = useRef(
+    Number.isInteger(saved?.viewIndex) ? saved.viewIndex : 0,
+  )
 
   useEffect(() => {
     setProgress(progressKey, {
@@ -128,6 +135,10 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
   useEffect(() => {
     if (viewIndex === displayedIndex) return undefined
 
+    const direction = viewIndex > prevViewRef.current ? 'forward' : 'back'
+    prevViewRef.current = viewIndex
+    setEnterDir(direction)
+
     const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches
@@ -141,7 +152,7 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
     const id = window.setTimeout(() => {
       setDisplayedIndex(viewIndex)
       setTurnFading(false)
-    }, 125)
+    }, 100)
 
     return () => window.clearTimeout(id)
   }, [viewIndex, displayedIndex])
@@ -353,6 +364,8 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
     ? `${displayedIndex + 1}. ${stage.prompt}`
     : stage.prompt
 
+  const completedStageCount = stageRecords.filter((r) => r.resolved).length
+
   const showCompletion =
     scenarioComplete &&
     config.completion &&
@@ -389,15 +402,20 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
 
         if (!feedbackPanel) {
           return (
-            <ChoiceOption
+            <div
               key={`${displayedIndex}-${choice.id}`}
-              state={state}
-              disabled={disabled}
-              lockState={!singleSelection || !showingActiveWork}
-              onClick={() => handleSelect(choice)}
+              className="ia-choice"
+              style={{ '--ia-choice-index': index }}
             >
-              {text}
-            </ChoiceOption>
+              <ChoiceOption
+                state={state}
+                disabled={disabled}
+                lockState={!singleSelection || !showingActiveWork}
+                onClick={() => handleSelect(choice)}
+              >
+                {text}
+              </ChoiceOption>
+            </div>
           )
         }
 
@@ -406,9 +424,11 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
             key={`${displayedIndex}-${choice.id}`}
             className={[
               'guided-scenario__choice-block',
+              'ia-choice',
               open ? 'has-feedback' : '',
               `is-${outcomeClass}`,
             ].join(' ')}
+            style={{ '--ia-choice-index': index }}
           >
             <ChoiceOption
               state={state}
@@ -437,52 +457,69 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
           </div>
         )
       })}
-
-      {showMissesPanel && missChoices.length > 0 ? (
-        <AssessmentMissesPanel
-          choices={missChoices}
-          allChoices={stage.choices}
-          labelChoices={labelChoices}
-          variant={config.missesVariant ?? 'light-list'}
-          title={config.missesTitle}
-        />
-      ) : null}
     </div>
   )
 
+  const missesPanel =
+    showMissesPanel && missChoices.length > 0 ? (
+      <AssessmentMissesPanel
+        choices={missChoices}
+        allChoices={stage.choices}
+        labelChoices={labelChoices}
+        variant={config.missesVariant ?? 'light-list'}
+        title={config.missesTitle}
+        className="guided-scenario__quiz-misses"
+      />
+    ) : null
+
   const navArrows = navStyle === 'questions'
   const bottomNav = navArrows && navPlacement === 'bottom'
+  const frameworkNav = navArrows && navPlacement === 'framework'
+  const sideNav = navArrows && !bottomNav && !frameworkNav
 
-  const prevArrow = showPrevArrow ? (
-    <button
-      type="button"
-      className="guided-scenario__nav-arrow"
-      aria-label={prevNavLabel}
-      onClick={goPreviousQuestion}
-    >
-      <span aria-hidden="true">←</span>
-    </button>
-  ) : null
+  const interactionMode =
+    promptCard && !showWordmark ? 'quiz' : 'practice'
 
-  const nextArrow = showNextArrow ? (
+  const prevArrow = (
     <button
       type="button"
       className={[
         'guided-scenario__nav-arrow',
-        !canGoNextQuestion ? 'is-disabled' : '',
+        'ia-arrow',
+        !showPrevArrow ? 'is-disabled' : '',
       ].join(' ')}
-      aria-label={canGoNextQuestion ? nextNavLabel : nextNavLockedLabel}
-      title={canGoNextQuestion ? nextNavLabel : nextNavLockedLabel}
-      aria-disabled={!canGoNextQuestion}
-      disabled={!canGoNextQuestion}
+      aria-label={prevNavLabel}
+      disabled={!showPrevArrow}
+      onClick={goPreviousQuestion}
+    >
+      <span aria-hidden="true">←</span>
+    </button>
+  )
+
+  const nextArrow = (
+    <button
+      type="button"
+      className={[
+        'guided-scenario__nav-arrow',
+        'ia-arrow',
+        !showNextArrow || !canGoNextQuestion ? 'is-disabled' : '',
+      ].join(' ')}
+      aria-label={
+        showNextArrow && canGoNextQuestion ? nextNavLabel : nextNavLockedLabel
+      }
+      title={
+        showNextArrow && canGoNextQuestion ? nextNavLabel : nextNavLockedLabel
+      }
+      aria-disabled={!showNextArrow || !canGoNextQuestion}
+      disabled={!showNextArrow || !canGoNextQuestion}
       onClick={() => {
-        if (!canGoNextQuestion) return
+        if (!showNextArrow || !canGoNextQuestion) return
         goNextStage()
       }}
     >
       <span aria-hidden="true">→</span>
     </button>
-  ) : null
+  )
 
   function renderCompletion() {
     if (!showCompletion) return null
@@ -519,78 +556,175 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
   }
 
   return (
-    <div className="guided-scenario">
+    <div
+      className={[
+        'guided-scenario',
+        interactionMode === 'quiz' ? 'ia-quiz' : 'ia-practice',
+        entrancePhase,
+      ].join(' ')}
+    >
       <SectionHeading title={config.title} />
 
       {config.instruction ? (
-        <p className="m-0 mb-6 text-body text-ink whitespace-nowrap max-[800px]:whitespace-normal">
-          {config.instruction}
-        </p>
+        <p className="screen-lede m-0">{config.instruction}</p>
       ) : null}
 
       {showScenario ? (
-        <Card tone={scenarioTone} className="mb-8">
-          <p className="m-0 mb-2 text-caption font-medium uppercase tracking-wide text-ink-soft">
-            Scenario
-          </p>
-          <p className="m-0 text-body text-ink">{config.scenario}</p>
-        </Card>
+        <ScenarioContextCard>
+          <p className="m-0">{config.scenario}</p>
+        </ScenarioContextCard>
       ) : null}
 
       {showWordmark ? (
-        <OscarStepHeader
-          letters={letters}
-          letterStages={letterStages}
-          stepIndex={viewIndex}
-          reachedIndex={Math.max(viewIndex, progressIndex)}
-          stepName={headerStage.name}
-          onSelect={handleLetterSelect}
-          interactive={wordmarkInteractive}
-          highlightMode={wordmarkHighlight}
-          isClickable={(index) =>
-            wordmarkInteractive && Boolean(stageRecords[index]?.resolved)
-          }
-          ariaLabel={`${config.frameworkLabel ?? 'Framework'} stages`}
-        />
-      ) : null}
-
-      <div
-        className={[
-          'guided-scenario__turn',
-          turnFading ? 'is-fading' : '',
-        ].join(' ')}
-      >
-        <p className="guided-scenario__prompt">{promptText}</p>
-
-        {navArrows && !bottomNav ? (
-          <div className="guided-scenario__question-area">
-            <div className="guided-scenario__nav-slot guided-scenario__nav-slot--prev">
-              {showPrevArrow ? (
-                prevArrow
-              ) : (
-                <span
-                  className="guided-scenario__nav-spacer"
-                  aria-hidden="true"
-                />
-              )}
-            </div>
-
-            <div className="guided-scenario__question-main">{choicesBlock}</div>
-
-            <div className="guided-scenario__nav-slot guided-scenario__nav-slot--next">
-              {showNextArrow ? (
-                nextArrow
-              ) : (
-                <span
-                  className="guided-scenario__nav-spacer"
-                  aria-hidden="true"
-                />
-              )}
+        frameworkNav ? (
+          <div
+            className="oscar-framework-nav"
+            aria-label={`${config.frameworkLabel ?? 'Framework'} step navigation`}
+          >
+            <div className="oscar-framework-nav__slot">{prevArrow}</div>
+            <OscarStepHeader
+              className="oscar-framework-nav__header"
+              letters={letters}
+              letterStages={letterStages}
+              stepIndex={viewIndex}
+              reachedIndex={Math.max(viewIndex, progressIndex)}
+              stepName={headerStage.name}
+              onSelect={handleLetterSelect}
+              interactive={wordmarkInteractive}
+              highlightMode={wordmarkHighlight}
+              isClickable={(index) =>
+                wordmarkInteractive && Boolean(stageRecords[index]?.resolved)
+              }
+              ariaLabel={`${config.frameworkLabel ?? 'Framework'} stages`}
+            />
+            <div className="oscar-framework-nav__slot oscar-framework-nav__slot--end">
+              {nextArrow}
             </div>
           </div>
         ) : (
-          choicesBlock
+          <OscarStepHeader
+            letters={letters}
+            letterStages={letterStages}
+            stepIndex={viewIndex}
+            reachedIndex={Math.max(viewIndex, progressIndex)}
+            stepName={headerStage.name}
+            onSelect={handleLetterSelect}
+            interactive={wordmarkInteractive}
+            highlightMode={wordmarkHighlight}
+            isClickable={(index) =>
+              wordmarkInteractive && Boolean(stageRecords[index]?.resolved)
+            }
+            ariaLabel={`${config.frameworkLabel ?? 'Framework'} stages`}
+          />
+        )
+      ) : null}
+
+      <div
+        key={displayedIndex}
+        className={[
+          'guided-scenario__turn',
+          promptCard ? 'guided-scenario__turn--quiz' : '',
+          turnFading ? 'is-fading' : ['ia-stage', `is-${enterDir}`].join(' '),
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {promptCard && sideNav ? (
+          <div className="guided-scenario__quiz-question">
+            <div
+              className="guided-scenario__question-area guided-scenario__question-area--prompt"
+              aria-label="Question navigation"
+            >
+              <div className="guided-scenario__nav-slot guided-scenario__nav-slot--prev">
+                {showPrevArrow ? (
+                  prevArrow
+                ) : (
+                  <span
+                    className="guided-scenario__nav-spacer"
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+
+              <div className="guided-scenario__question-main ia-prompt">
+                <QuestionPromptCard
+                  index={displayedIndex}
+                  total={stages.length}
+                  text={stage.prompt}
+                  completedCount={completedStageCount}
+                  currentResolved={Boolean(viewRecord?.resolved)}
+                  className="guided-scenario__prompt-card"
+                />
+              </div>
+
+              <div className="guided-scenario__nav-slot guided-scenario__nav-slot--next">
+                {showNextArrow ? (
+                  nextArrow
+                ) : (
+                  <span
+                    className="guided-scenario__nav-spacer"
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+            </div>
+
+            {choicesBlock}
+          </div>
+        ) : (
+          <>
+            {promptCard ? (
+              <div className="ia-prompt">
+                <QuestionPromptCard
+                  index={displayedIndex}
+                  total={stages.length}
+                  text={stage.prompt}
+                  completedCount={completedStageCount}
+                  currentResolved={Boolean(viewRecord?.resolved)}
+                  className="guided-scenario__prompt-card"
+                />
+              </div>
+            ) : (
+              <p className="guided-scenario__prompt ia-prompt ia-heading">
+                {promptText}
+              </p>
+            )}
+
+            {sideNav ? (
+              <div className="guided-scenario__question-area">
+                <div className="guided-scenario__nav-slot guided-scenario__nav-slot--prev">
+                  {showPrevArrow ? (
+                    prevArrow
+                  ) : (
+                    <span
+                      className="guided-scenario__nav-spacer"
+                      aria-hidden="true"
+                    />
+                  )}
+                </div>
+
+                <div className="guided-scenario__question-main">
+                  {choicesBlock}
+                </div>
+
+                <div className="guided-scenario__nav-slot guided-scenario__nav-slot--next">
+                  {showNextArrow ? (
+                    nextArrow
+                  ) : (
+                    <span
+                      className="guided-scenario__nav-spacer"
+                      aria-hidden="true"
+                    />
+                  )}
+                </div>
+              </div>
+            ) : (
+              choicesBlock
+            )}
+          </>
         )}
+
+        {missesPanel}
 
         {activeFeedback ? (
           <div className="guided-scenario__feedback">
@@ -616,20 +750,28 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
             </Button>
           </div>
         ) : null}
-
-        {renderCompletion()}
       </div>
 
       {bottomNav ? (
         <div className="match-quiz__nav match-quiz__nav--activity">
           <div className="match-quiz__nav-slot">
-            {showPrevArrow ? prevArrow : null}
+            {showPrevArrow ? (
+              prevArrow
+            ) : (
+              <span className="guided-scenario__nav-spacer" aria-hidden="true" />
+            )}
           </div>
           <div className="match-quiz__nav-slot match-quiz__nav-slot--end">
-            {showNextArrow ? nextArrow : null}
+            {showNextArrow ? (
+              nextArrow
+            ) : (
+              <span className="guided-scenario__nav-spacer" aria-hidden="true" />
+            )}
           </div>
         </div>
       ) : null}
+
+      {renderCompletion()}
     </div>
   )
 }

@@ -1,12 +1,15 @@
 import SectionHeading from '../components/SectionHeading'
 import MatchQuestionBoard from '../components/MatchQuestionBoard'
+import useScreenEntrance from '../hooks/useScreenEntrance'
 
 export default function P2bMatchQuestion() {
+  const entrancePhase = useScreenEntrance(650)
+
   return (
-    <div>
+    <div className={['ia-quiz', entrancePhase].join(' ')}>
       <SectionHeading title="Match the question to its type" />
 
-      <p className="m-0 mb-6 text-body text-ink whitespace-nowrap max-[800px]:whitespace-normal">
+      <p className="screen-lede m-0">
         For each question, pick the family it belongs to. Six questions. Go.
       </p>
 

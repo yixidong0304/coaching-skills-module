@@ -7,6 +7,7 @@ import FrameworkShowcase, {
 import KeyIdea from '../components/KeyIdea'
 import DownloadFlashcardRow from '../components/DownloadFlashcardRow'
 import { consumeEnterFromDivider } from '../lib/dividerTransition'
+import useScreenEntrance from '../hooks/useScreenEntrance'
 
 const GROW_ITEMS = [
   {
@@ -37,21 +38,27 @@ const GROW_ITEMS = [
 
 export default function P3aGrowOverview() {
   const [enterFromDivider] = useState(() => consumeEnterFromDivider())
+  const entrancePhase = useScreenEntrance(800)
 
   return (
-    <div className={enterFromDivider ? 'screen--from-divider' : undefined}>
+    <div
+      className={[
+        'meet-framework',
+        entrancePhase,
+        enterFromDivider ? 'screen--from-divider' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <SectionHeading title="Meet GROW" />
 
-      <div className="m-0 mb-6 w-full text-body text-ink space-y-3">
-        <p className="m-0 whitespace-nowrap max-[800px]:whitespace-normal">
-          OSCAR structures feedback. GROW structures a short coaching conversation when someone brings you a problem.
-        </p>
-        <p className="m-0 whitespace-nowrap max-[800px]:whitespace-normal">
-          Move through four stages: Goal, Reality, Options, and Way forward.
-        </p>
-      </div>
+      <p className="screen-lede m-0">
+        OSCAR structures feedback. GROW structures a short coaching conversation
+        when someone brings you a problem. Move through four stages: Goal,
+        Reality, Options, and Way forward.
+      </p>
 
-      <Caption className="mb-3 whitespace-nowrap max-[800px]:whitespace-normal">
+      <Caption className="screen-caption">
         Hover over or tap each letter to see its guiding question.
       </Caption>
 
@@ -59,6 +66,7 @@ export default function P3aGrowOverview() {
         items={GROW_ITEMS}
         layout={GROW_LAYOUT}
         ariaLabel="GROW framework"
+        defaultIndex={null}
       />
 
       <KeyIdea>

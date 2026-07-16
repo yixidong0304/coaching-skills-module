@@ -231,7 +231,11 @@ function DetailSlot({ layout, item, detailId, visible, stageRef }) {
 /**
  * Watermark framework panel (OSCAR / GROW).
  *
- * Three vertical bands: top details · middle letters/words · bottom details.
+ * Modes:
+ *  - Idle (no selection): all letters pale + staggered float; no explanation
+ *  - Hover preview: temporary active visual + explanation; leave → idle or selection
+ *  - Selected: persistent click highlight + explanation; whole-set idle stops
+ *
  * items[]: { letter, word, detail? } or { letter, word, question, explanation }
  */
 export default function FrameworkShowcase({
@@ -239,57 +243,75 @@ export default function FrameworkShowcase({
   layout = OSCAR_LAYOUT,
   className = '',
   ariaLabel = 'Framework letters',
+  defaultIndex = null,
 }) {
   const baseId = useId()
   const stageRef = useRef(null)
-  const [activeIndex, setActiveIndex] = useState(null)
+  const initialSelected =
+    defaultIndex == null || items.length === 0
+      ? null
+      : Math.min(Math.max(0, defaultIndex), items.length - 1)
+  const [selectedIndex, setSelectedIndex] = useState(initialSelected)
+  const [hoverIndex, setHoverIndex] = useState(null)
   const isWide = useMinShowcase()
 
-  const activate = (index) => setActiveIndex(index)
-  const deactivate = () => setActiveIndex(null)
-  const toggle = (index) =>
-    setActiveIndex((current) => (current === index ? null : index))
+  const displayIndex = hoverIndex ?? selectedIndex
+  const hasDisplay = displayIndex !== null
+  const isIdle = selectedIndex === null
+  const isPreviewing = hoverIndex !== null
+
+  function select(index) {
+    setSelectedIndex(index)
+    setHoverIndex(null)
+  }
 
   if (!isWide) {
     const activeItem =
-      activeIndex === null ? null : (items[activeIndex] ?? null)
+      selectedIndex === null ? null : (items[selectedIndex] ?? null)
     const activePos =
-      activeIndex === null ? null : (layout[activeIndex] ?? null)
+      selectedIndex === null ? null : (layout[selectedIndex] ?? null)
     const mobileDetailId = `${baseId}-mobile-detail`
 
     return (
       <div
-        className={['framework-showcase__mobile', className]
+        className={[
+          'framework-showcase',
+          'framework-showcase__mobile',
+          isIdle ? 'is-idle' : 'has-selection',
+          className,
+        ]
           .filter(Boolean)
           .join(' ')}
         aria-label={ariaLabel}
+        data-idle={isIdle ? 'true' : 'false'}
       >
         <div className="framework-showcase__acronym" role="list">
           {items.map((item, index) => {
-            const isActive = activeIndex === index
-            const hasActive = activeIndex !== null
+            const isSelected = selectedIndex === index
 
             return (
               <button
                 key={`${item.letter}-${index}`}
                 type="button"
                 role="listitem"
-                aria-expanded={isActive}
+                aria-pressed={isSelected}
                 aria-controls={mobileDetailId}
                 aria-label={`${item.letter}: ${item.word}`}
-                onClick={() => toggle(index)}
+                onClick={() => select(index)}
                 className={[
                   'framework-showcase__letter-btn',
                   'framework-showcase__acronym-btn',
-                  isActive ? 'is-active' : '',
-                  hasActive && !isActive ? 'is-dimmed' : '',
+                  isSelected ? 'is-active is-selected' : '',
+                  !isIdle && !isSelected ? 'is-dimmed' : '',
                 ].join(' ')}
+                style={{ '--showcase-letter-index': index }}
               >
                 <span className="framework-showcase__letter">{item.letter}</span>
                 <span
                   className={[
                     'framework-showcase__word',
-                    isActive ? 'is-active' : '',
+                    isSelected ? 'is-active' : '',
+                    !isIdle && !isSelected ? 'is-dimmed' : '',
                   ].join(' ')}
                 >
                   {item.word}
@@ -308,18 +330,23 @@ export default function FrameworkShowcase({
           aria-live="polite"
         >
           {activeItem ? (
-            <div className="framework-showcase__detail-row">
-              <span
-                className="framework-showcase__dot"
-                aria-hidden="true"
-                style={
-                  activePos?.dot
-                    ? { backgroundColor: activePos.dot }
-                    : undefined
-                }
-              />
-              <div role="note" className="framework-showcase__detail-text">
-                <DetailContent item={activeItem} />
+            <div
+              key={selectedIndex}
+              className="framework-showcase__mobile-panel-inner"
+            >
+              <div className="framework-showcase__detail-row">
+                <span
+                  className="framework-showcase__dot"
+                  aria-hidden="true"
+                  style={
+                    activePos?.dot
+                      ? { backgroundColor: activePos.dot }
+                      : undefined
+                  }
+                />
+                <div role="note" className="framework-showcase__detail-text">
+                  <DetailContent item={activeItem} />
+                </div>
               </div>
             </div>
           ) : (
@@ -332,46 +359,58 @@ export default function FrameworkShowcase({
     )
   }
 
-  const hasActive = activeIndex !== null
-
   return (
     <div
       ref={stageRef}
       className={[
+        'framework-showcase',
         'framework-showcase__stage',
-        hasActive ? 'has-active' : '',
+        isIdle ? 'is-idle' : 'has-selection',
+        hasDisplay ? 'has-active' : '',
+        isPreviewing ? 'is-previewing' : '',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
       role="list"
       aria-label={ariaLabel}
+      data-idle={isIdle ? 'true' : 'false'}
+      data-previewing={isPreviewing ? 'true' : 'false'}
+      data-has-selection={selectedIndex !== null ? 'true' : 'false'}
     >
       {items.map((item, index) => {
         const pos = layout[index] ?? OSCAR_LAYOUT[index]
         if (!pos) return null
 
-        const isActive = activeIndex === index
+        const isDisplayed = displayIndex === index
+        const isSelected = selectedIndex === index
+        const shouldDim = hasDisplay && !isDisplayed
         const detailId = `${baseId}-detail-${index}`
         const centered = pos.letter.origin === 'center'
 
         return (
-          <div key={`${item.letter}-${index}`} role="listitem">
+          <div
+            key={`${item.letter}-${index}`}
+            role="listitem"
+            className="framework-showcase__item"
+            style={{ '--showcase-letter-index': index }}
+          >
             <button
               type="button"
-              aria-expanded={isActive}
+              aria-pressed={isSelected}
               aria-controls={detailId}
               aria-label={`${item.letter}: ${item.word}`}
-              onMouseEnter={() => activate(index)}
-              onMouseLeave={deactivate}
-              onFocus={() => activate(index)}
-              onBlur={deactivate}
-              onClick={() => toggle(index)}
+              onMouseEnter={() => setHoverIndex(index)}
+              onMouseLeave={() => setHoverIndex(null)}
+              onFocus={() => setHoverIndex(index)}
+              onBlur={() => setHoverIndex(null)}
+              onClick={() => select(index)}
               className={[
                 'framework-showcase__letter-btn',
                 centered ? 'is-centered' : '',
-                isActive ? 'is-active' : '',
-                hasActive && !isActive ? 'is-dimmed' : '',
+                isDisplayed ? 'is-active' : '',
+                isSelected ? 'is-selected' : '',
+                shouldDim ? 'is-dimmed' : '',
               ].join(' ')}
               style={{ left: pos.letter.left, top: pos.letter.top }}
             >
@@ -381,8 +420,8 @@ export default function FrameworkShowcase({
             <span
               className={[
                 'framework-showcase__word',
-                isActive ? 'is-active' : '',
-                hasActive && !isActive ? 'is-dimmed' : '',
+                isDisplayed ? 'is-active' : '',
+                shouldDim ? 'is-dimmed' : '',
               ].join(' ')}
               style={{ left: pos.word.left, top: pos.word.top }}
             >
@@ -393,7 +432,7 @@ export default function FrameworkShowcase({
               layout={pos}
               item={item}
               detailId={detailId}
-              visible={isActive}
+              visible={isDisplayed}
               stageRef={stageRef}
             />
           </div>

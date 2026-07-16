@@ -13,7 +13,7 @@ export default function P2aFeedbackConversation() {
     >
       <SectionHeading title="Feedback is a conversation, not a monologue" />
 
-      <p className="m-0 mb-8 text-body text-ink">
+      <p className="screen-lede m-0">
         Feedback can feel like blame when it only tells someone what went wrong.
         Coaching feedback combines clear observations with thoughtful questions,
         creating space for reflection, learning, and response.
@@ -25,10 +25,7 @@ export default function P2aFeedbackConversation() {
         aria-label="Statement becomes a coaching question"
       >
         <div className="contrast-pair__enter-statement">
-          <Card
-            tabIndex={0}
-            className="contrast-pair__card contrast-pair__card--from"
-          >
+          <Card className="contrast-pair__card contrast-pair__card--from">
             <p className="contrast-pair__label m-0">Statement</p>
             <p className="contrast-pair__quote m-0">This keeps happening.</p>
           </Card>
@@ -43,10 +40,7 @@ export default function P2aFeedbackConversation() {
         </div>
 
         <div className="contrast-pair__enter-question">
-          <Card
-            tabIndex={0}
-            className="contrast-pair__card contrast-pair__card--to"
-          >
+          <Card className="contrast-pair__card contrast-pair__card--to">
             <p className="contrast-pair__label m-0">Coaching question</p>
             <p className="contrast-pair__quote m-0">
               When does this usually happen?

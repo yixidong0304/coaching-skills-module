@@ -1,11 +1,12 @@
 import { CHOICE_LETTERS } from './ScenarioFeedbackPanel'
+import DetailedAnswerPanel from './DetailedAnswerPanel'
 
 /**
  * Secondary explanations after a correct answer.
- * Variants stay visually lighter than primary attached feedback — no card chrome.
  *
  * - compact: binary quizzes — “Why not B?” + one short line
- * - light-list: scenario quizzes — “Why the others fall short” + A/B lines
+ * - light-list: multi-option quizzes — plain divider list (Coach Sam / GROW / Real Situations)
+ * - answer-panel: legacy structured DetailedAnswerPanel (unused in live flows)
  */
 export default function AssessmentMissesPanel({
   choices = [],
@@ -13,10 +14,15 @@ export default function AssessmentMissesPanel({
   labelChoices = true,
   variant = 'light-list',
   title,
+  className = '',
 }) {
   if (!choices.length) return null
 
   const isCompact = variant === 'compact'
+  const isAnswerPanel = variant === 'answer-panel'
+  const rootClass = ['guided-scenario__misses', className]
+    .filter(Boolean)
+    .join(' ')
 
   function letterFor(choice, index) {
     const sourceIndex = allChoices.findIndex((c) => c.id === choice.id)
@@ -36,7 +42,7 @@ export default function AssessmentMissesPanel({
     const text = choice.missSummary ?? choice.feedback
     return (
       <div
-        className="guided-scenario__misses guided-scenario__misses--compact"
+        className={`${rootClass} guided-scenario__misses--compact`}
         role="note"
         aria-label={resolvedTitle}
       >
@@ -46,9 +52,37 @@ export default function AssessmentMissesPanel({
     )
   }
 
+  if (isAnswerPanel) {
+    return (
+      <DetailedAnswerPanel
+        label={resolvedTitle}
+        tone="feedback"
+        role="note"
+        className={['assessment-misses-panel', className]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <ul className="detailed-answer__items m-0 list-none p-0">
+          {choices.map((choice, index) => {
+            const label = letterFor(choice, index)
+            const explanation = choice.missSummary ?? choice.feedback
+            return (
+              <li key={choice.id} className="detailed-answer__item">
+                <p className="detailed-answer__item-title m-0">
+                  {labelChoices ? `${label}. ${choice.text}` : choice.text}
+                </p>
+                <p className="detailed-answer__item-body m-0">{explanation}</p>
+              </li>
+            )
+          })}
+        </ul>
+      </DetailedAnswerPanel>
+    )
+  }
+
   return (
     <div
-      className="guided-scenario__misses guided-scenario__misses--light"
+      className={`${rootClass} guided-scenario__misses--light`}
       role="note"
       aria-label={resolvedTitle}
     >

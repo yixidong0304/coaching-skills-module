@@ -1,9 +1,11 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import SectionHeading from '../components/SectionHeading'
-import Caption from '../components/Caption'
 import Card from '../components/Card'
 import ChoiceOption from '../components/ChoiceOption'
 import InlineOutcomeFeedback from '../components/InlineOutcomeFeedback'
+import AssessmentMissesPanel from '../components/AssessmentMissesPanel'
+import ScenarioContextCard from '../components/ScenarioContextCard'
+import DetailedAnswerPanel from '../components/DetailedAnswerPanel'
 import ActivityCallout from '../components/ActivityCallout'
 import Button from '../components/Button'
 import ReferenceDrawer from '../components/ReferenceDrawer'
@@ -120,6 +122,11 @@ export default function P3bScenarioSelector() {
     [activeId],
   )
 
+  const approachMisses = useMemo(() => {
+    if (!active || !approach.resolved || !approach.correctId) return []
+    return active.choices.filter((c) => c.id !== approach.correctId)
+  }, [active, approach.resolved, approach.correctId])
+
   function applyDraft(draft) {
     setApproach(draft.approach)
     setQuestionText(draft.questionText)
@@ -146,7 +153,7 @@ export default function P3bScenarioSelector() {
     setActiveId(id)
   }
 
-  function returnToOverview({ completeCurrent = false } = {}) {
+  function returnToOverview() {
     if (!activeId) return
 
     if (approach.resolved) {
@@ -156,7 +163,7 @@ export default function P3bScenarioSelector() {
       }))
     }
 
-    if (completeCurrent) {
+    if (modelRevealed) {
       setDoneIds((prev) => {
         if (prev.has(activeId)) return prev
         const next = new Set(prev)
@@ -166,6 +173,15 @@ export default function P3bScenarioSelector() {
     }
 
     setActiveId(null)
+  }
+
+  function markSituationComplete(id) {
+    setDoneIds((prev) => {
+      if (prev.has(id)) return prev
+      const next = new Set(prev)
+      next.add(id)
+      return next
+    })
   }
 
   function handleApproach(choice) {
@@ -215,16 +231,12 @@ export default function P3bScenarioSelector() {
   function revealModel() {
     if (questionText.trim().length < REAL_SITUATIONS_TEXT_MIN) return
     setModelRevealed(true)
+    if (activeId) markSituationComplete(activeId)
   }
 
   const canRevealModel =
     questionText.trim().length >= REAL_SITUATIONS_TEXT_MIN
   const canGoNextStep = approach.resolved
-
-  // Finish when this is the last incomplete scenario (others already done)
-  const isLastToComplete = REAL_SITUATIONS.every(
-    (s) => doneIds.has(s.id) || s.id === activeId,
-  )
 
   return (
     <div className="real-situations">
@@ -254,30 +266,24 @@ export default function P3bScenarioSelector() {
 
       {!inFlow ? (
         <div className="real-situations__overview">
-          <p className="m-0 mb-4 max-w-prose text-body text-ink">
-            You&apos;ve learned the frameworks: OSCAR for feedback, GROW for
-            structure, and the question families. This is where it comes
-            together: three situations, pulled from a manager&apos;s real week,
-            with no labels and no hints. There&apos;s no single right answer here.
-            The skill you&apos;re practicing is <em>choosing</em> the approach
-            and finding your first words.
+          <p className="screen-lede real-situations__lede m-0">
+            Put OSCAR, GROW, and powerful questions into practice.
           </p>
 
-          <Caption className="mb-8 max-w-prose">
-            Complete at least one situation to continue. The other two are
-            optional, and you can come back to them anytime. If you want to
-            double-check a framework along the way, the{' '}
-            <button
-              type="button"
-              className="real-situations__cheat-inline"
-              aria-haspopup="dialog"
-              aria-expanded={cheatOpen}
-              onClick={(event) => openCheatSheet(event.currentTarget)}
-            >
-              Cheat sheet
-            </button>{' '}
-            (top right) is always there.
-          </Caption>
+          <aside
+            className="real-situations__task"
+            role="note"
+            aria-label="Your task"
+          >
+            <p className="real-situations__task-eyebrow m-0">Your task</p>
+            <p className="real-situations__task-main m-0">
+              Choose one situation, decide which approach fits, then write what
+              you would say first.
+            </p>
+            <p className="real-situations__task-note m-0">
+              *Complete one situation to continue. The other two are optional.
+            </p>
+          </aside>
 
           <div
             className="static-card-grid real-situations__grid"
@@ -304,7 +310,7 @@ export default function P3bScenarioSelector() {
                       selectScenario(scenario.id)
                     }
                   }}
-                  aria-label={`${scenario.title}. ${done ? 'Completed. ' : ''}Select to practice.`}
+                  aria-label={`${scenario.title}. ${scenario.overview}${done ? ' Completed.' : ''} Explore situation.`}
                 >
                   {done ? (
                     <span
@@ -314,11 +320,14 @@ export default function P3bScenarioSelector() {
                       ✓
                     </span>
                   ) : null}
-                  <p className="real-situations__pick-title m-0 mb-2 text-h2 font-semibold">
+                  <p className="real-situations__pick-title m-0">
                     {scenario.title}
                   </p>
-                  <p className="real-situations__pick-body m-0 text-body">
-                    {scenario.summary}
+                  <p className="real-situations__pick-body m-0">
+                    {scenario.overview}
+                  </p>
+                  <p className="real-situations__pick-cue m-0" aria-hidden="true">
+                    Explore situation →
                   </p>
                 </Card>
               )
@@ -328,7 +337,7 @@ export default function P3bScenarioSelector() {
           {doneIds.size > 0 ? (
             <ActivityCallout
               variant="complete"
-              className="real-situations__completion mt-8"
+              className="real-situations__completion"
             >
               <p className="m-0">{completionCopy(doneIds.size)}</p>
             </ActivityCallout>
@@ -346,19 +355,12 @@ export default function P3bScenarioSelector() {
             ← Back to situations
           </button>
 
-          <Card
-            tone="mint"
+          <ScenarioContextCard
             className="real-situations__context"
-            aria-label={`Selected situation: ${active.title}`}
+            title={active.title}
           >
-            <p className="m-0 mb-2 text-caption font-medium uppercase tracking-wide text-ink-soft">
-              Scenario
-            </p>
-            <p className="m-0 mb-2 text-body font-semibold text-ink">
-              {active.title}
-            </p>
-            <p className="m-0 text-body text-ink">{active.summary}</p>
-          </Card>
+            <p className="m-0">{active.summary}</p>
+          </ScenarioContextCard>
 
           {step === 1 ? (
             <section
@@ -415,6 +417,51 @@ export default function P3bScenarioSelector() {
                   )
                 })}
               </div>
+
+              {approach.resolved && approachMisses.length > 0 ? (
+                <AssessmentMissesPanel
+                  choices={approachMisses}
+                  allChoices={active.choices}
+                  labelChoices={false}
+                  variant="light-list"
+                  title="Why the others fall short"
+                />
+              ) : null}
+
+              <div className="match-quiz__nav match-quiz__nav--activity">
+                <div className="match-quiz__nav-slot">
+                  <span
+                    className="guided-scenario__nav-spacer"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div className="match-quiz__nav-slot match-quiz__nav-slot--end">
+                  <button
+                    type="button"
+                    className={[
+                      'guided-scenario__nav-arrow',
+                      !canGoNextStep ? 'is-disabled' : '',
+                    ].join(' ')}
+                    aria-label={
+                      canGoNextStep
+                        ? 'Continue to next decision'
+                        : 'Answer correctly to continue'
+                    }
+                    title={
+                      canGoNextStep
+                        ? 'Continue to next decision'
+                        : 'Answer correctly to continue'
+                    }
+                    disabled={!canGoNextStep}
+                    onClick={() => {
+                      if (!canGoNextStep) return
+                      setStep(2)
+                    }}
+                  >
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
             </section>
           ) : null}
 
@@ -423,102 +470,74 @@ export default function P3bScenarioSelector() {
               className="real-situations__step real-situations__step--enter"
               aria-label="Step 2"
             >
-              <label
-                htmlFor={textareaId}
-                className="guided-scenario__prompt block"
-              >
+              <p className="guided-scenario__prompt m-0 mb-4">
                 2. Write the first question you&apos;d ask.
-              </label>
-              <textarea
-                id={textareaId}
-                className="real-situations__textarea"
-                rows={3}
-                value={questionText}
-                onChange={(e) => setQuestionText(e.target.value)}
-                disabled={modelRevealed}
-                placeholder="Your opening question…"
-              />
+              </p>
 
-              {!modelRevealed ? (
-                <div className="mt-4">
-                  <Button
-                    variant="primary"
-                    disabled={!canRevealModel}
-                    onClick={revealModel}
-                  >
-                    See the model response
-                  </Button>
-                </div>
-              ) : (
-                <div className="real-situations__model-wrap mt-6">
-                  <Card tone="mint" className="real-situations__model">
-                    <p className="real-situations__model-quote m-0">
-                      &ldquo;{active.modelQuestion}&rdquo;. {active.modelWhy}
-                    </p>
-                    <Caption className="mt-4 real-situations__model-caption">
-                      {REAL_SITUATIONS_COMPARE}
-                    </Caption>
-                  </Card>
-                  <div className="mt-6">
+              <div className="real-situations__response">
+                <label
+                  htmlFor={textareaId}
+                  className="real-situations__response-label"
+                >
+                  Your response
+                </label>
+                <textarea
+                  id={textareaId}
+                  className="real-situations__textarea"
+                  rows={3}
+                  value={questionText}
+                  onChange={(e) => setQuestionText(e.target.value)}
+                  disabled={modelRevealed}
+                  placeholder="Your opening question…"
+                />
+
+                {!modelRevealed ? (
+                  <div className="real-situations__response-action">
                     <Button
                       variant="primary"
-                      onClick={() =>
-                        returnToOverview({ completeCurrent: true })
-                      }
+                      disabled={!canRevealModel}
+                      onClick={revealModel}
                     >
-                      {isLastToComplete
-                        ? 'Finish'
-                        : 'Explore other situations'}
+                      Compare with a model
                     </Button>
                   </div>
+                ) : null}
+              </div>
+
+              {modelRevealed ? (
+                <div className="real-situations__model-wrap">
+                  <DetailedAnswerPanel
+                    label="Model response"
+                    primary={<>&ldquo;{active.modelQuestion}&rdquo;</>}
+                    explanation={active.modelWhy}
+                    checklistLead={REAL_SITUATIONS_COMPARE.lead}
+                    checklist={REAL_SITUATIONS_COMPARE.bullets}
+                    note={REAL_SITUATIONS_COMPARE.note}
+                    tone="feedback"
+                  />
                 </div>
-              )}
+              ) : null}
+
+              <div className="match-quiz__nav match-quiz__nav--activity">
+                <div className="match-quiz__nav-slot">
+                  <button
+                    type="button"
+                    className="guided-scenario__nav-arrow"
+                    aria-label="Previous decision"
+                    onClick={() => setStep(1)}
+                  >
+                    <span aria-hidden="true">←</span>
+                  </button>
+                </div>
+                <div className="match-quiz__nav-slot match-quiz__nav-slot--end">
+                  <span
+                    className="guided-scenario__nav-spacer"
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
             </section>
           ) : null}
-
-          <div className="match-quiz__nav match-quiz__nav--activity real-situations__nav">
-            <div className="match-quiz__nav-slot">
-              {step === 2 ? (
-                <button
-                  type="button"
-                  className="guided-scenario__nav-arrow"
-                  aria-label="Previous decision"
-                  onClick={() => setStep(1)}
-                >
-                  <span aria-hidden="true">←</span>
-                </button>
-              ) : null}
-            </div>
-
-            <div className="match-quiz__nav-slot match-quiz__nav-slot--end">
-              {step === 1 ? (
-                <button
-                  type="button"
-                  className={[
-                    'guided-scenario__nav-arrow',
-                    !canGoNextStep ? 'is-disabled' : '',
-                  ].join(' ')}
-                  aria-label={
-                    canGoNextStep
-                      ? 'Continue to next decision'
-                      : 'Answer correctly to continue'
-                  }
-                  title={
-                    canGoNextStep
-                      ? 'Continue to next decision'
-                      : 'Answer correctly to continue'
-                  }
-                  disabled={!canGoNextStep}
-                  onClick={() => {
-                    if (!canGoNextStep) return
-                    setStep(2)
-                  }}
-                >
-                  <span aria-hidden="true">→</span>
-                </button>
-              ) : null}
-            </div>
-          </div>
         </div>
       ) : null}
     </div>

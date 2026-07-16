@@ -26,9 +26,9 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
 - Title: "OSCAR, step by step"
 - Instruction: "Use the arrows or select a letter to build the conversation step by step."
 - Lock hint (course Next): "Step through all five to continue."
-- Header: OSCAR letters (interactive: pointer, hover, focus; current = underline + marker; visited ≠ unvisited) | step name. Direct letter selection allowed.
-- Layout: 40/60 (stacks below 800px — Your move above Conversation so far). LEFT "Your move" (≤3 bullets). RIGHT "Conversation so far" (cumulative lines; past de-emphasized; current highlighted).
-- Nav arrows beside content (aria-labels: "Previous OSCAR step" / "Next OSCAR step"); forward/back; must visit all five before continuing.
+- Header: framework browsing nav — fixed circular ← / → flanking OSCAR letters (interactive: pointer, hover, focus; current = underline + marker; visited ≠ unvisited) | step name. Direct letter selection allowed. Arrows stay in the upper nav as content height changes.
+- Layout: 40/60 (stacks below 800px — Your move above Conversation so far). LEFT "Your move" (≤3 bullets). RIGHT "Conversation so far" (cumulative lines; past de-emphasized; current highlighted). No bottom question-nav row.
+- Arrow aria-labels: "Previous OSCAR step" / "Next OSCAR step"; forward/back; must visit all five before continuing.
 - Guidance and example (verbatim):
   - Observation — Share only what you personally observed. / State facts, not hearsay or interpretation. · "From the back of the room, I noticed you spent much of the presentation looking down rather than at the audience."
   - Specific — Name one or two facts the person can act on. / Avoid piling on too many improvement points. · "A few times, your voice dropped enough that it was difficult to hear from the back."
@@ -61,7 +61,7 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
 - Instruction: "At each stage, choose the question that best moves the conversation forward."
 - Persistent scenario card: "Priya is a strong performer who has recently started saying yes to everything. Two deliverables are now slipping, and she seems stretched thin. Coach her through a short GROW conversation."
 - Stage stepper: G·R·O·W letters as progress indicator (same highlight logic as OSCAR step-by-step).
-- Feedback mode `selected-only` (lighter than Coach Sam): wrong/partial → feedback only under selected; correct → CORRECT — CONTINUE under correct only; no distractor explanations; retry until correct. Nav aria: Previous/Next GROW stage; → locked until correct.
+- Feedback mode `primary-then-misses` (same as Coach Sam): wrong/partial → feedback only under selected; correct → CORRECT — CONTINUE under correct, then light secondary list “Why the others fall short” explaining why the two alternatives do not fit that GROW stage. Forward locked until correct. Nav aria: Previous/Next GROW stage.
 - Per stage: prompt + 3 choices:
   G — "What's the best opening question?"
    A. "Should you just drop the newsletter project?" → close: "You've jumped to a solution before Priya has defined the goal."
@@ -89,7 +89,7 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
   Consequences correct: "What impact do you think missing those figures had on the leadership review?"
   Results correct: "How would getting the report in complete and on time change the next review?"
 - Completion: labeled ACTIVITY COMPLETE — "You completed a full OSCAR conversation: observed the facts, surfaced the impact, invited Sam’s solution, and connected it to a better result. Sam owns the fix—that’s coaching feedback."
-- Note: turns map 1:1 to O, S, C, A, R. GROW practice uses lighter `selected-only` feedback (no distractor reveal).
+- Note: turns map 1:1 to O, S, C, A, R. GROW practice uses the same `primary-then-misses` feedback pattern (correct panel + “Why the others fall short”).
 
 ## PART 2 — 2b: LISTENING & POWERFUL QUESTIONING
 
@@ -155,48 +155,44 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
 - Continue via side → into GROW overview (p3a-1).
 
 ### 3a.3 — GROW takeaway  [screen id: p3a-3]
-- Keep as high-value takeaway (time objection). Full-bleed forest panel; BottomNav Next remains.
+- Sidebar title: "GROW takeaway" (renamed from "GROW, anywhere"). Keeps Part 3 order: GROW overview → GROW in action → GROW takeaway → Real situations → When to coach, and when to direct…
+- High-value takeaway (time objection). Full-bleed forest breath panel; BottomNav Next remains. No GROW guide download on this page (download stays on Meet GROW / overview).
 - Eyebrow: "TAKEAWAY"
-- Headline: "A GROW conversation can fit into 5–10 minutes."
-- Body: "It is a structure you carry into the next conversation—not another meeting you have to schedule."
-- Closing line: "Next: choose the right approach for real management situations."
+- Main statement: "A GROW conversation can fit into 5–10 minutes."
+- Supporting line: "It is a structure you carry into the next conversation—not another meeting you have to schedule."
+- Transition line: "Next: choose the right approach for real management situations."
 - No Start button beyond standard Next.
 ## PART 3 — 3b: APPLYING COACHING — REAL SCENARIOS
 
 ### 3b.1 — Real situations: what would you do?  [screen id: p3b-1]
-- Two views: **Overview** (landing) and **Scenario flow** (entered by clicking a scenario card; replaces overview — orientation + other cards not visible while in flow).
+- Two views: **Overview** (landing) and **Scenario flow** (entered by clicking a scenario card; replaces overview).
 - Title: "Real situations: what would you do?" (both views; cheat sheet control stays top-right).
 - **Overview**
-  - Body (orientation): "You've learned the frameworks: OSCAR for feedback, GROW for structure, and the question families. This is where it comes together: three situations, pulled from a manager's real week, with no labels and no hints. There's no single right answer here. The skill you're practicing is choosing the approach and finding your first words." (italicize "choosing")
-  - Task caption: "Complete at least one situation to continue. The other two are optional, and you can come back to them anytime. If you want to double-check a framework along the way, the Cheat sheet (top right) is always there." — "Cheat sheet" is an inline control that opens the same ReferenceDrawer as the top-right button.
-  - Three scenario cards (check badge when completed). Course Next unlocks after **one** completed scenario; the other two remain optional.
-  - Completion card (mint, below the three cards, once ≥1 done): "Nice work. You've completed [1/2] of the situations. Try another, or continue on when you're ready." / all three: "You've worked through all three situations. You've practiced choosing the approach. The last skill is knowing when not to coach at all. Continue on."
+  - Short lede: "Put OSCAR, GROW, and powerful questions into practice."
+  - Compact full-width YOUR TASK panel (aligned with the three-card grid): eyebrow “YOUR TASK” · main “Choose one situation, decide which approach fits, then write what you would say first.” · footnote “*Complete one situation to continue. The other two are optional.”
+  - Three equal-height situation cards (title + one short overview + “Explore situation →”; full context only inside the chosen scenario):
+    - Difficult feedback — "A strong team member has recently become short and dismissive with colleagues."
+    - Missing goals — "A direct report has missed two months of targets, and you do not yet know why."
+    - After a mistake — "A resolved client error has left a team member discouraged and defensive."
+  - Check badge when completed. Course Next unlocks after **one** completed situation; others optional. Return from a situation via “← Back to situations”.
+  - Completion callout once ≥1 done (progress / all-three copy).
 - **Scenario flow**
-  - Top: ghost "← Back to situations" (returns to overview anytime; keeps progress if step 1 was completed).
-  - Persistent mint SCENARIO card (Sam/Priya pattern) with the chosen situation.
-  - Step 1 — "1. Which approach fits best?" ChoiceOptions + inline feedback (Sam-style retry). Bottom circular ←/→ like p2b-4: ← hidden on step 1; → disabled until correct.
-  - Step 2 — "2. Write the first question you'd ask." Textarea; at ≥10 chars, primary "See the model response" reveals the model mint card + compare caption beneath. No → on step 2; ← returns to step 1.
-  - After model revealed: one primary Button — "Explore other situations" if others remain, or "Finish" if this was the last of three — returns to Overview and marks the scenario complete.
-- Scenario content (verbatim):
-  A — Difficult feedback: "A normally solid team member has been short and dismissive with colleagues in the last few meetings. Others have noticed. You need to address it without blowing it up."
-  B — Missing goals: "A direct report has missed their targets two months running and seems disengaged. You don't fully know why."
-  C — After a mistake: "Someone on your team made an error that caused a client hiccup. It's resolved. You want them to learn from it, not just feel bad about it."
-- Approach choices + feedback (verbatim):
-  A: OSCAR ✅ "It's a feedback conversation. Start from observed facts." / GROW ⚠️ "GROW structures problem-solving; here the core move is delivering feedback well. OSCAR fits the moment better." / Questions only ⚠️ "Questions will matter, but without OSCAR's shape you risk circling. Anchor in the framework."
-  B: GROW + powerful questions ✅ "You need structure AND the real picture. GROW's Reality stage is built for 'you don't fully know why.'" / OSCAR ⚠️ "You don't have a clear observed behavior to feed back yet. You need to understand first. GROW fits better." / Direct instruction ❌ "Telling a disengaged person to hit targets addresses the symptom. Coach first."
-  C: Coaching questions (OSCAR-lite, learning-focused) ✅ "It's resolved. The goal is learning, not correction. Light questions do it." / Full OSCAR ⚠️ "Workable, but a full feedback structure can feel heavy for a resolved issue. A lighter learning conversation fits." / Let it go ❌ "No conversation means no learning. The mistake becomes a cost with no return."
-- Models (verbatim):
-  A: ""In the last two team meetings I noticed some sharp exchanges with colleagues. What impact do you think that's having on the team?" Opens with observed fact, then a Consequences question."
-  B: ""What would a solid month look like for you? And what's getting in the way right now?" A Goal question then a Reality question."
-  C: ""Now that it's sorted, what do you make of how it happened? What would you do differently next time?" Learning-focused, no blame."
-  Caption under every model: "Yours doesn't need to match. Compare the shape: fact-based? open? forward-looking?"
-- Optional coaching cheat sheet: persistent ghost button top-right ("Cheat sheet") opens a right slide-in `ReferenceDrawer` with compact OSCAR / GROW / question-family / when-not-to-coach cards. Framework-level reminder only — no scenario answers or hints. Close via X, outside click, or Escape.
+  - Top: "← Back to situations" (only return-to-list control; available on both steps). Full-width neutral SCENARIO context card (white/neutral border — information, not feedback): eyebrow · secondary title · dominant readable summary. Same treatment on Step 1 and Step 2.
+  - Step 1 — "Which approach fits best?" Full-width choices; wrong/partial → attached inline feedback; correct → CORRECT — CONTINUE under selected. Plain-text “Why the others fall short” below options (same light-list pattern as Coach Sam / GROW — not a green Answer Explanation panel). Then question-step nav row (divider · empty left slot · circular → right).
+  - Step 2 — "Write the first question you'd ask." Full-width YOUR RESPONSE. “Compare with a model” reveals MODEL RESPONSE DetailedAnswerPanel (open-response exception). Question-step nav row (divider · circular ← left · empty right slot). Revealing the model marks the situation complete; no bottom “Explore other situations” button — use ← Back to situations or course Next.
+  - After model: return via “← Back to situations” or continue with course bottom nav.
+- Correct approaches: A Difficult feedback → OSCAR; B Missing goals → GROW; C After a mistake → Questions only.
+- Cheat sheet (right-side ReferenceDrawer, four white cards): OSCAR · GROW · Question families · When to direct — framework reference only.
 
-### 3b.2 — When to coach, and when not to  [screen id: p3b-2]
-- Title: "When to coach, and when not to"
-- Body: "Coaching doesn't replace clear direction. In a crisis, a safety-critical moment, or a decision that's yours to make, you tell clearly and without apology. Coaching comes before (to prepare people) or after (to learn from it), not in the middle of the emergency."
-- Highlight callout (forest/white, TAKEAWAY style): "Knowing when NOT to coach is part of the skill."
-- No interaction. This pays off the seed planted in the Part 1 knowledge check.
+### 3b.2 — When to coach, and when to direct  [screen id: p3b-2]
+- Title / sidebar: "When to coach, and when to direct"
+- Intro: "Coaching works when there is room to think, learn, and take ownership." / "Directing is the better choice when clarity, safety, or an immediate decision matters most."
+- Two equal-height white comparison cards (no hover; coach and direct equally valid — no warning styling):
+  - COACH WHEN: The person can help shape the answer / Reflection will improve future performance / There is time to explore options / The goal is learning and ownership. Example: "What do you think is causing the issue?"
+  - DIRECT WHEN: Safety or compliance is at risk / Immediate action is required / The standard is non-negotiable / The decision belongs to the manager. Example: "Stop the process now. We'll review what happened afterward."
+- KEY DECISION (Key Idea visual family, label only changed): Ask: "Is this a moment for thinking—or a moment for clarity?" Supporting: "Direct now when the situation requires it. Coach before or after when reflection can help."
+- PART 3 COMPLETE callout: "You can now choose an approach, structure a coaching conversation, and know when coaching is not the right move." Transition: "Next: review what you learned and take the tools with you."
+- No overlapping circles; no large dark-green takeaway card. No interaction beyond standard Back/Next.
 ## INTRO
 
 ### I.1 — Welcome  [screen id: intro-1]
@@ -208,15 +204,14 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
 - Below, persistent: the "~15 min" pill badge and a white "Start" button (Start = course Next).
 
 ### I.2 — What you'll learn  [screen id: intro-2]
-- Title: "What you'll be able to do"
-- Body intro line: "Fifteen minutes, five skills: everything hands-on:"
-- Five objectives (styled list, one per line, small forest number or check):
-  1. Tell when to coach and when to just direct, and why it matters.
-  2. Give feedback that opens a conversation, using OSCAR.
-  3. Ask powerful questions that get people thinking.
-  4. Run a short coaching conversation with GROW.
-  5. Pick the right approach for the real situations you face.
-- Footnote caption: "You'll leave with downloadable coaching cards to keep: OSCAR, questioning, and GROW."
+- Two sections: Skills you'll learn + Materials you'll get (preview only; downloads at wrap-2).
+- SECTION 1 — h2: "Skills you'll learn" — five icon-led outcome cards (equal weight; desktop: breathable centered 3+2). Larger intentional icons + concise scannable copy:
+  1. "Coach vs. direct" — "Know when to coach, when to direct, and why it matters."
+  2. "Feedback with OSCAR" — "Give feedback that opens a constructive conversation."
+  3. "Powerful questions" — "Ask questions that help people reflect and think forward."
+  4. "Structure with GROW" — "Guide a short coaching conversation with GROW."
+  5. "Apply the right approach" — "Choose the right tool for the situation in front of you."
+- SECTION 2 — h2: "Materials you'll get" with adjacent pill “Available at the end.” Intro: "You'll receive a full slide deck and three printable coaching skills cards at the end of the course." Two equal teaser cards with larger editorial tilted previews (no mint image-stage behind assets; no download buttons): Course slides · Coaching skills cards. Same visual system as wrap-2, lighter (preview only).
 
 ## PART 1 — WHAT IS COACHING?
 
@@ -270,29 +265,28 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
 
 ## WRAP-UP
 
-### W.1 — Key takeaways  [screen id: wrap-1]
-- BreathScreen treatment (forest, centered). Eyebrow: "THREE THINGS TO TAKE WITH YOU"
-- Three lines, staggered reveal (each its own line, generous spacing):
-  "Coaching works under time pressure. It can happen in minutes."
-  "One good question can beat a long explanation."
-  "Small moments build long-term capability."
+### W.1 — Your journey  [screen id: wrap-1]
+- Sidebar: "Your journey". Page title: "You're ready to coach."
+- Intro: "Here's the big picture—your toolkit for everyday leadership conversations."
+- Open four-step journey infographic (no outer frame): large mint icon circles for steps 1–3, dark-green filled circle for GROW; thin green connectors; numbered titles + support lines under each node.
+- Below: wide pale-mint two-column panel — Key Takeaways (checks) | Your Action Plan (numbered 1–3).
+- No quotation / completion affirmation (those live on Go coach).
 
 ### W.2 — Your materials  [screen id: wrap-2]
 - Title (sidebar + SectionHeading): "Your materials"
-- Body: "Well done. You've completed the course. As promised, everything you worked with is yours to keep: the full slide deck behind this module, and the three coaching skills cards. Keep them close: the best time to use them is your next real conversation."
-- Materials row (mirrors intro-2 layout — two cards):
-  1. LEFT — "Course slides": preview thumbnail (`slides_preview.png`) + one-line description + primary "Download slides" → `/downloads/course-slides.pdf` (live).
-  2. RIGHT — "Coaching skills cards": preview thumbnail (`cards_preview.png`) + one-line description + ONE primary "Download all three cards" → `/downloads/coaching-skills-cards.zip` (OSCAR + questioning + GROW). No per-card buttons here — individual PNG downloads live on framework pages.
-- Below: unscored reflection input — label: "One coaching question I'll use this week:" (single-line text, subtle confirm: "Keep it somewhere you'll see it.")
-- No summative quiz (deliberate — in-module practice already assessed all objectives).
+- Body: "You've completed the course. Download the full slide deck and three coaching skills cards to use in your next real conversation."
+- Two equal-height download cards (type label · title · one sentence · larger editorial tilted preview · primary button) — same preview system as intro materials teaser:
+  1. PDF DECK — Course slides → Download slides
+  2. PRINTABLE CARDS — Coaching skills cards → Download all three cards
+- Related to intro materials teaser but clearly actionable. No mint image-stage behind previews. No reflection input.
 
 ### W.3 — Go coach  [screen id: wrap-3]
-- Final BreathScreen (forest, full-bleed, centered). LAST screen of the course.
-- Eyebrow: "ONE LAST THING"
-- Large white statement: "You don't need the perfect question. You need a real one, asked with genuine curiosity."
-- Bridge line (~85% white): "Fifteen minutes here. The real course is your next conversation. Go coach."
-- Staggered fade entrance. Visiting marks course complete (100%). Bottom-nav Next is hidden.
-- Sidebar title: "Go coach" (Wrap-up group).
+- Final full-bleed forest completion page with subtle depth (glow / radial motif) — NOT a chapter-divider stack.
+- Desktop: asymmetrical two-column layout — left: final statement + next-action + secondary portfolio link; right: completion card with large growth symbol, “You've built something powerful.” + supporting body.
+- Statement: "You don't need the perfect question. / You need a real one, asked with genuine curiosity."
+- Next-action: "In your next conversation, pause before giving the answer—and ask one real question first."
+- Portfolio: "See how this course was designed →"
+- Visiting marks course complete (100%). Bottom-nav Next is hidden. Sidebar: "Go coach".
 
 ### 2a.5 — OSCAR wrap-up + card  [screen id: p2a-5]  (UPDATED)
 - See primary 2a.5 entry above (high-contrast recap cards + Next skill transition block + printable card download).
@@ -301,17 +295,6 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
 - At the bottom of the screen, download row: primary "Download GROW guide" → `/downloads/grow_card.png` + "Keep the four stages and guiding questions nearby for your next coaching conversation."
 - Key Idea above download: "GROW is a flexible conversation shape, not a formal meeting. You can use it in 5–10 minutes."
 
-### W.1 — Your journey (REPLACES "Key takeaways")  [screen id: wrap-1]
-- Title: "The whole module, at a glance"
-- Body line: "Here's the ground you just covered, and how it fits together."
-- A MODULE MAP: a horizontal flow of five nodes connected by arrows/line, each node a small card:
-  1. WHAT COACHING IS — "Asking, not telling, and knowing when each fits."
-  2. OSCAR — "Feedback as a conversation: Observation → Specific → Consequences → Actions → Results."
-  3. LISTENING & QUESTIONS — "The container and what you do inside it: four question families."
-  4. GROW — "A whole coaching conversation in four moves, hallway-sized."
-  5. REAL SITUATIONS — "Choosing the approach, and knowing when not to coach."
-- Nodes reveal sequentially on entrance (staggered, left to right, connector line drawing between them).
-- Below the map, the three takeaway lines as a single caption row: "Coaching works under time pressure · One good question can beat a long explanation · Small moments build long-term capability."
 ### I.1 — Welcome (REDESIGNED — course landing page)  [screen id: intro-1]
 - Modeled on standard online-course landing pages (Coursera/Google Learning): NOT a breath screen.
 - Layout, top to bottom:
@@ -332,13 +315,4 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
 - Reduced-motion: immediate state changes on click, no slash path animation.
 
 ### I.2 — What you'll learn (REDESIGNED)  [screen id: intro-2]
-- Two sections of EQUAL visual weight:
-- SECTION 1 — h2: "Skills you'll learn" — five cards (grid, 2–3 per row), each: short bold headline + one-line body, keywords highlighted in forest semibold:
-  1. "Coach vs. direct" — Tell when to **coach** and when to just **direct**, and why it matters.
-  2. "Feedback with OSCAR" — Give feedback that opens a conversation, using the **OSCAR framework**.
-  3. "Powerful questions" — Ask **powerful questions** that get people thinking.
-  4. "Structure with GROW" — Run a short coaching conversation with the **GROW framework**.
-  5. "The right approach" — Pick the right approach for the **real situations** you face.
-- SECTION 2 — h2: "Materials you'll get" — intro paragraph: "You'll receive the following materials at the end of the course: a full slide deck and three printable coaching skills cards." Two equal cards (title + body, then preview image aligned; no end-of-course captions; downloads live at wrap-2):
-  1. "Course slides" — "The complete slide deck behind this module, as a PDF." + preview thumbnail (`slides_preview.png`)
-  2. "Coaching skills cards" — "Three printable one-page cards: the OSCAR framework, the question library, and the GROW framework." + preview thumbnail (`cards_preview.png`)
+- See primary I.2 entry above (five parallel skill cards + materials preview with “Available at the end”; downloads live at wrap-2).
