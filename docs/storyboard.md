@@ -201,7 +201,7 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
   Beat 2: the same line transforms — "extra task" gets struck through: "Coaching ≠ extra task"
   Beat 3 (large): "Coaching = a different way of communicating."
   Beats auto-advance (~1.4s apart) AND advance on click/tap; reduced-motion shows all three stacked.
-- Below, persistent: the "~15 min" pill badge and a white "Start" button (Start = course Next).
+- Below, persistent: the "~30 min" pill badge and a white "Start" button (Start = course Next).
 
 ### I.2 — What you'll learn  [screen id: intro-2]
 - Two sections: Skills you'll learn + Materials you'll get (preview only; downloads at wrap-2).
@@ -301,7 +301,7 @@ Bridge caption (banner): "You know what coaching is. Now, how do you actually do
   - Eyebrow/category chip: "MANAGEMENT & LEADERSHIP · SELF-PACED ELEARNING"
   - Course title (display scale): "Coaching Skills for Managers"
   - One-line description: "Give feedback that lands, ask questions that unlock thinking, and coach in the everyday flow of work."
-  - Meta row (icon + label chips): "~15 minutes" · "5 skills" · "3 take-away cards" · "No prerequisites"
+  - Meta row (icon + label chips): "~30 minutes" · "5 skills" · "3 take-away cards" · "No prerequisites"
   - Primary Button: "Start course" (= course next())
 - Clean canvas background (standard screen, not full-bleed).
 

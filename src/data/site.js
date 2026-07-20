@@ -1,5 +1,5 @@
 /**
- * External portfolio write-up for this module.
- * Replace "#" with the live URL when ready — opens in a new tab when set.
+ * External case study write-up for this module.
+ * Opens in a new tab from the Go coach completion page.
  */
-export const PORTFOLIO_URL = '#'
+export const PORTFOLIO_URL = 'https://coaching-case-study.vercel.app/'

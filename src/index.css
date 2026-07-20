@@ -6132,32 +6132,51 @@ button.bg-forest:not(:disabled):active {
 }
 
 .wrap-close__portfolio {
-  margin-top: 0.25rem;
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.25rem;
   border: none;
-  background: none;
-  color: color-mix(in srgb, var(--color-on-sage) 72%, transparent);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  line-height: var(--text-caption--line-height);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--color-on-sage) 30%, transparent);
-  text-underline-offset: 0.18em;
+  border-radius: var(--radius-button);
+  background: var(--color-canvas);
+  color: var(--color-forest);
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  line-height: var(--text-body-sm--line-height);
+  text-decoration: none;
+  box-shadow: var(--shadow-soft);
   cursor: pointer;
   transition:
     color var(--duration-step) ease-out,
-    text-decoration-color var(--duration-step) ease-out;
+    background-color var(--duration-step) ease-out,
+    box-shadow var(--duration-step) ease-out,
+    transform var(--duration-step) ease-out;
 }
 
 .wrap-close__portfolio:hover {
-  color: var(--color-on-sage);
-  text-decoration-color: var(--color-on-sage);
+  background: var(--color-mint-tint);
+  color: var(--color-forest-dark);
+  box-shadow: var(--shadow-raised);
 }
 
 .wrap-close__portfolio:focus-visible {
   outline: 2px solid var(--color-on-sage);
   outline-offset: 3px;
-  border-radius: 2px;
+}
+
+@keyframes wrap-close-portfolio-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-on-sage) 0%, transparent);
+  }
+  50% {
+    transform: scale(var(--scale-landing-breathe));
+    box-shadow:
+      0 0 0 0.55rem color-mix(in srgb, var(--color-on-sage) 18%, transparent),
+      0 0.35rem 1.1rem color-mix(in srgb, var(--color-forest-dark) 35%, transparent);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -6176,8 +6195,25 @@ button.bg-forest:not(:disabled):active {
   }
 
   .wrap-close__portfolio {
-    animation: breath-fade var(--duration-breath-enter) ease-out both;
-    animation-delay: calc(var(--duration-breath-enter) * 1.1);
+    animation:
+      breath-fade var(--duration-breath-enter) ease-out both,
+      wrap-close-portfolio-breathe var(--duration-landing-breathe) ease-in-out
+        infinite;
+    animation-delay:
+      calc(var(--duration-breath-enter) * 1.1),
+      calc(var(--duration-breath-enter) * 1.1 + 400ms);
+  }
+
+  .wrap-close__portfolio:hover,
+  .wrap-close__portfolio:focus-visible {
+    animation-play-state: paused, paused;
+    transform: scale(var(--scale-landing-breathe));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap-close__portfolio {
+    animation: none;
   }
 }
 

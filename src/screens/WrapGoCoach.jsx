@@ -8,10 +8,6 @@ import { IconGrowth } from '../components/CourseIcons'
  */
 function WrapGoCoach() {
   const { markComplete, currentId } = useCourse()
-  const hasPortfolio =
-    typeof PORTFOLIO_URL === 'string' &&
-    PORTFOLIO_URL.length > 0 &&
-    PORTFOLIO_URL !== '#'
 
   useEffect(() => {
     markComplete(currentId)
@@ -37,14 +33,9 @@ function WrapGoCoach() {
 
           <a
             className="wrap-close__portfolio"
-            href={hasPortfolio ? PORTFOLIO_URL : '#'}
-            {...(hasPortfolio
-              ? { target: '_blank', rel: 'noopener noreferrer' }
-              : {
-                  onClick: (event) => {
-                    event.preventDefault()
-                  },
-                })}
+            href={PORTFOLIO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             See how this course was designed →
           </a>
