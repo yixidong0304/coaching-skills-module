@@ -7,7 +7,7 @@
   --color-sage: #89c273;
   --color-sage-muted: #56955e;
   --color-showcase-stage: #63a05a;
-  --color-showcase-letter: #5f9b63;
+  --color-showcase-letter: #82bd7a;
   --color-on-sage: #ffffff;
   --color-showcase-dot-1: #007843;
   --color-showcase-dot-2: #005c33;
@@ -478,7 +478,8 @@ button.bg-forest:not(:disabled):active {
   font-weight: 700;
   line-height: var(--leading-showcase-detail);
   white-space: nowrap;
-  color: var(--color-on-sage);
+  color: #ffffff;
+  display: inline-block;
   opacity: 1;
   letter-spacing: 0;
   pointer-events: none;
@@ -539,7 +540,7 @@ button.bg-forest:not(:disabled):active {
   font-size: var(--text-showcase-detail);
   font-weight: 700;
   line-height: var(--leading-showcase-detail);
-  color: var(--color-on-sage);
+  color: #ffffff;
   white-space: normal;
 }
 
