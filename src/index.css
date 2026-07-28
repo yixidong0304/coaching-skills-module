@@ -6,8 +6,9 @@
   --color-forest-pressed: #003d1f;
   --color-sage: #89c273;
   --color-sage-muted: #56955e;
+  --color-showcase-stage: #63a05a;
   --color-showcase-letter: #5f9b63;
-  --color-on-sage: #17251e;
+  --color-on-sage: #ffffff;
   --color-showcase-dot-1: #007843;
   --color-showcase-dot-2: #005c33;
   --color-showcase-dot-3: #5f9b63;
@@ -428,7 +429,7 @@ button.bg-forest:not(:disabled):active {
   width: 100%;
   aspect-ratio: var(--ratio-showcase);
   min-height: var(--spacing-showcase-panel-min);
-  background: var(--color-sage);
+  background: var(--color-showcase-stage);
   border-radius: var(--radius-card);
 }
 
@@ -583,7 +584,7 @@ button.bg-forest:not(:disabled):active {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: var(--color-sage);
+  background: var(--color-showcase-stage);
   border-radius: var(--radius-card);
   padding: 1.25rem 1rem 1.35rem;
 }
@@ -5306,7 +5307,7 @@ button.bg-forest:not(:disabled):active {
   margin-bottom: 0;
   padding: clamp(1.5rem, 3.2vw, 2rem);
   border-radius: var(--radius-card);
-  background: var(--color-sage);
+  background: var(--color-showcase-stage);
   box-shadow: var(--shadow-soft);
   overflow: visible;
 }
