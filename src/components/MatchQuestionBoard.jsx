@@ -20,6 +20,7 @@ export default function MatchQuestionBoard({ lockCourseNext = true }) {
     useCourse()
   const progressKey = 'match-quiz'
   const feedbackRef = useRef(null)
+  const nextArrowRef = useRef(null)
   const focusGeneration = useRef(0)
 
   const saved = getProgress(progressKey)
@@ -79,14 +80,19 @@ export default function MatchQuestionBoard({ lockCourseNext = true }) {
   }, [complete, markComplete, currentId])
 
   useEffect(() => {
-    if (!record.selectedId) return undefined
+    if (!record.resolved) return undefined
+    if (index >= total - 1) return undefined
+    const canGo =
+      index < progressIndex || (index === progressIndex && record.resolved)
+    if (!canGo) return undefined
+
     const generation = ++focusGeneration.current
     const id = window.setTimeout(() => {
       if (generation !== focusGeneration.current) return
-      feedbackRef.current?.focus?.()
+      nextArrowRef.current?.focus?.()
     }, 30)
     return () => window.clearTimeout(id)
-  }, [record.selectedId, record.resolved, index])
+  }, [record.resolved, index, progressIndex, total])
 
   function handleSelect(familyId) {
     if (!showingActive) return
@@ -208,6 +214,7 @@ export default function MatchQuestionBoard({ lockCourseNext = true }) {
             <div className="guided-scenario__nav-slot guided-scenario__nav-slot--next">
               {showNext ? (
                 <button
+                  ref={nextArrowRef}
                   type="button"
                   className={[
                     'guided-scenario__nav-arrow',

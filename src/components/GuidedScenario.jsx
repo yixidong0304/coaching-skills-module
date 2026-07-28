@@ -61,6 +61,7 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
   const completionVariant = config.completionVariant ?? 'complete'
 
   const feedbackRef = useRef(null)
+  const nextArrowRef = useRef(null)
   const focusGeneration = useRef(0)
 
   const saved = getProgress(progressKey)
@@ -226,23 +227,30 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
   }, [showMissesPanel, record.correctId, stage.choices])
 
   useEffect(() => {
-    if (!feedbackPanel) return undefined
-    if (!record.lastChoiceId && !record.resolved) return undefined
+    if (!record.resolved) return undefined
     if (turnFading) return undefined
+    if (navStyle !== 'questions') return undefined
+    if (viewIndex >= stages.length - 1) return undefined
+    const canGo =
+      viewIndex < progressIndex ||
+      (viewIndex === progressIndex && record.resolved)
+    if (!canGo) return undefined
 
     const generation = ++focusGeneration.current
     const id = window.setTimeout(() => {
       if (generation !== focusGeneration.current) return
-      feedbackRef.current?.focus?.()
+      nextArrowRef.current?.focus?.()
     }, 30)
 
     return () => window.clearTimeout(id)
   }, [
-    feedbackPanel,
-    record.lastChoiceId,
     record.resolved,
     displayedIndex,
     turnFading,
+    viewIndex,
+    progressIndex,
+    navStyle,
+    stages.length,
   ])
 
   function choiceState(choice) {
@@ -498,6 +506,7 @@ export default function GuidedScenario({ config, lockCourseNext = true }) {
 
   const nextArrow = (
     <button
+      ref={nextArrowRef}
       type="button"
       className={[
         'guided-scenario__nav-arrow',

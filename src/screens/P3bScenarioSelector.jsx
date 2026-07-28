@@ -77,6 +77,7 @@ export default function P3bScenarioSelector() {
   const cheatTriggerRef = useRef(null)
   const cheatReturnFocusRef = useRef(null)
   const feedbackRef = useRef(null)
+  const nextArrowRef = useRef(null)
   const focusGeneration = useRef(0)
 
   function openCheatSheet(triggerEl) {
@@ -219,14 +220,14 @@ export default function P3bScenarioSelector() {
   }
 
   useEffect(() => {
-    if (!approach.lastChoiceId && !approach.resolved) return undefined
+    if (!approach.resolved) return undefined
     const generation = ++focusGeneration.current
     const id = window.setTimeout(() => {
       if (generation !== focusGeneration.current) return
-      feedbackRef.current?.focus?.()
+      nextArrowRef.current?.focus?.()
     }, 30)
     return () => window.clearTimeout(id)
-  }, [approach.lastChoiceId, approach.resolved, activeId])
+  }, [approach.resolved, activeId])
 
   function revealModel() {
     if (questionText.trim().length < REAL_SITUATIONS_TEXT_MIN) return
@@ -437,6 +438,7 @@ export default function P3bScenarioSelector() {
                 </div>
                 <div className="match-quiz__nav-slot match-quiz__nav-slot--end">
                   <button
+                    ref={nextArrowRef}
                     type="button"
                     className={[
                       'guided-scenario__nav-arrow',
