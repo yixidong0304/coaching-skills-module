@@ -7,7 +7,7 @@
   --color-sage: #89c273;
   --color-sage-muted: #56955e;
   --color-showcase-letter: #5f9b63;
-  --color-on-sage: #ffffff;
+  --color-on-sage: #17251e;
   --color-showcase-dot-1: #007843;
   --color-showcase-dot-2: #005c33;
   --color-showcase-dot-3: #5f9b63;
@@ -20,12 +20,13 @@
   --color-ink: #17251e;
   --color-ink-soft: #3a463f;
   --color-line: #e2e5e1;
+  --color-line-interactive: #8a938a;
   --color-progress-track: #dbe1db;
   --color-on-primary: #fafafa;
 
   --color-success: #0a6b3b;
   --color-success-fill: #e4f3ea;
-  --color-partial: #b7791f;
+  --color-partial: #96610f;
   --color-partial-fill: #fbf3e2;
   --color-error: #c0392b;
   --color-error-fill: #fbeae8;
@@ -221,6 +222,21 @@ body {
 
 #root {
   min-height: 100%;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-button);
+  background: var(--color-forest);
+  color: var(--color-on-primary);
+  font-weight: 600;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
 }
 
 button {
@@ -2972,7 +2988,7 @@ button.bg-forest:not(:disabled):active {
   width: 100%;
   margin: 0;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--color-line-interactive);
   border-radius: var(--radius-button);
   background: var(--color-canvas);
   color: var(--color-ink);
@@ -3012,7 +3028,7 @@ button.bg-forest:not(:disabled):active {
 
 .choice-option--idle {
   background: var(--color-canvas);
-  border-color: var(--color-line);
+  border-color: var(--color-line-interactive);
   color: var(--color-ink);
 }
 
@@ -5308,7 +5324,7 @@ button.bg-forest:not(:disabled):active {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-on-sage) 78%, transparent);
+  color: var(--color-on-sage);
 }
 
 .oscar-toolkit__heading {
@@ -5326,7 +5342,7 @@ button.bg-forest:not(:disabled):active {
   font-size: var(--text-body);
   font-weight: 500;
   line-height: var(--text-body--line-height);
-  color: color-mix(in srgb, var(--color-on-sage) 88%, transparent);
+  color: var(--color-on-sage);
 }
 
 .oscar-toolkit__tiles {

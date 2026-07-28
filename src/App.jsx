@@ -49,6 +49,13 @@ function CourseShell() {
     return () => window.removeEventListener('keydown', onKey)
   }, [drawerOpen])
 
+  useEffect(() => {
+    const name = currentScreen?.title ?? currentScreen?.partLabel
+    document.title = name
+      ? `${name} — Coaching Skills for Managers`
+      : 'Coaching Skills for Managers'
+  }, [currentScreen])
+
   const ScreenComponent = resolveScreen(currentScreen)
   const isFullBleed =
     !showGallery &&
@@ -67,6 +74,9 @@ function CourseShell() {
 
   return (
     <div className="shell" style={shellStyle}>
+      <a href="#module-content" className="skip-link">
+        Skip to module content
+      </a>
       {/* Desktop sidebar */}
       <div className="shell__sidebar-slot hidden min-shell:block">
         <Sidebar
@@ -130,6 +140,8 @@ function CourseShell() {
         </header>
 
         <main
+          id="module-content"
+          tabIndex={-1}
           className={[
             'shell__content',
             isFullBleed ? 'shell__content--full-bleed' : '',
