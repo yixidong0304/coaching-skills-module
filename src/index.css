@@ -240,6 +240,14 @@ body {
   top: 1rem;
 }
 
+#module-content:focus {
+  outline: none;
+}
+#module-content:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 0;
+}
+
 button {
   font-family: inherit;
 }

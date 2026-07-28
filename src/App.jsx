@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CourseProvider, useCourse } from './context/CourseContext'
 import Sidebar from './components/Sidebar'
 import BottomNav from './components/BottomNav'
@@ -39,6 +39,8 @@ function CourseShell() {
   const { currentScreen, sidebarCollapsed, setSidebarCollapsed } = useCourse()
   const [showGallery, setShowGallery] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const mainRef = useRef(null)
+  const [announcement, setAnnouncement] = useState('')
 
   useEffect(() => {
     if (!drawerOpen) return undefined
@@ -54,6 +56,12 @@ function CourseShell() {
     document.title = name
       ? `${name} — Coaching Skills for Managers`
       : 'Coaching Skills for Managers'
+  }, [currentScreen])
+
+  useEffect(() => {
+    if (!currentScreen) return
+    mainRef.current?.focus()
+    setAnnouncement(currentScreen.title ?? currentScreen.partLabel ?? '')
   }, [currentScreen])
 
   const ScreenComponent = resolveScreen(currentScreen)
@@ -141,6 +149,7 @@ function CourseShell() {
 
         <main
           id="module-content"
+          ref={mainRef}
           tabIndex={-1}
           className={[
             'shell__content',
@@ -149,6 +158,9 @@ function CourseShell() {
             .filter(Boolean)
             .join(' ')}
         >
+          <p className="sr-only" role="status" aria-live="polite">
+            {announcement}
+          </p>
           {showGallery ? (
             <div className="shell__padded">
               <ComponentGallery />
