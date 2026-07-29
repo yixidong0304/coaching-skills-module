@@ -236,8 +236,15 @@ body {
   font-weight: 600;
 }
 .skip-link:focus {
-  left: 1rem;
+  left: calc(1rem + 2.5rem + 0.75rem);
   top: 1rem;
+  z-index: 200;
+  width: auto;
+  max-width: calc(100% - 2rem);
+  border: 2px solid var(--color-on-primary);
+  box-shadow: var(--shadow-soft);
+  font-size: 1rem;
+  line-height: 1.2;
 }
 
 #module-content:focus {
